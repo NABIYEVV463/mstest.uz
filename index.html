@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MStest — Milliy sertifikat va SAT testlari</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#ffffffcc;--line:#d6d3f3;--sym:#6a4cff;--b1:#bdb2ff;--b2:#ffd9a0;
+--c1:#12a36a;--c2:#1b8fd1;--c3:#c98400;--c4:#e0405c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a99;--line:#2c3270;--sym:#cfc6ff;--b1:#3b2fb0;--b2:#7a4a12;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}}
+:root[data-theme="dark"]{--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a99;--line:#2c3270;--sym:#cfc6ff;--b1:#3b2fb0;--b2:#7a4a12;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+#bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.blob{position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(70px);opacity:.55;animation:drift 22s ease-in-out infinite alternate}
+.blob.a{background:var(--b1);left:-20vmax;top:-20vmax}
+.blob.b{background:var(--b2);right:-25vmax;bottom:-25vmax;animation-duration:28s;animation-direction:alternate-reverse}
+@keyframes drift{to{transform:translate(18vmax,12vmax) scale(1.15)}}
+.sym{position:absolute;bottom:-8%;color:var(--sym);font-weight:600;opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.4}90%{opacity:.4}100%{transform:translateY(-115vh) rotate(45deg);opacity:0}}
+body.paused .sym,body.paused .blob{animation-play-state:paused}
+main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:18px 18px 56px}
+header{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.02em}
+.logo i{font-style:normal;color:var(--c3)}
+button{font:inherit;color:inherit;cursor:pointer}
+#theme,#auth{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;backdrop-filter:blur(8px)}
+h1{font-size:clamp(2.3rem,9vw,4.6rem);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:9vh 0 14px;max-width:11em}
+.lead{color:var(--mute);font-size:1.1rem;max-width:30em;margin:0 0 40px}
+.grid{display:grid;gap:14px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}.lv:nth-child(2){margin-top:22px}.lv:nth-child(4){margin-top:22px}}
+.lv{text-align:left;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:18px;padding:20px 20px 18px;backdrop-filter:blur(10px);transition:transform .2s,box-shadow .2s}
+.lv:hover,.lv:focus-visible{transform:translateY(-4px);box-shadow:0 12px 40px -12px var(--c);outline:none}
+.lv:focus-visible,#theme:focus-visible,.opt:focus-visible,#close:focus-visible{outline:2px solid var(--c,var(--sym));outline-offset:3px}
+.lv h2{margin:0 0 4px;font-size:1.5rem;letter-spacing:-.02em}
+.lv p{margin:0 0 12px;color:var(--mute)}
+.lv span{font-weight:600;color:var(--c)}
+#demo{display:none;margin-top:28px;background:var(--card);border:1px solid var(--line);border-top:6px solid var(--c);border-radius:18px;padding:22px;backdrop-filter:blur(12px)}
+#demo.on{display:block;animation:pop .3s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.97)}}
+#demo h3{margin:0 0 4px;color:var(--c)}
+#q{font-size:1.5rem;font-weight:600;margin:6px 0 16px}
+.opts{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.opt{background:transparent;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:1.1rem;transition:background .15s}
+.opt:hover{background:var(--line)}
+.opt.ok{background:var(--c1);color:#05261a;border-color:transparent}
+.opt.no{background:var(--c4);color:#2b0610;border-color:transparent}
+#fb{min-height:1.6em;margin:14px 0 0;font-weight:600}
+#close{margin-top:8px;background:none;border:0;color:var(--mute);text-decoration:underline;padding:6px 0}
+.bar{display:flex;justify-content:space-between;align-items:center}
+#tm{font-variant-numeric:tabular-nums;font-weight:800;font-size:1.3rem}
+.dots{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.dot{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-weight:600}
+.dot.on{background:var(--c);color:#111;border-color:transparent}
+.dot.cur{outline:2px solid var(--c);outline-offset:2px}
+.opt.sel{border-color:var(--c);background:var(--line)}
+.nav{display:flex;justify-content:space-between;margin-top:16px}
+.nav button{background:var(--c);color:#111;border:0;border-radius:12px;padding:10px 22px;font-weight:600}
+#prev{background:transparent!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+.nav button:disabled{opacity:.4;cursor:default}
+.r{padding:10px 0;border-bottom:1px solid var(--line)}
+.big{font-size:2.6rem;font-weight:800;margin-bottom:6px}
+dialog{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:22px;width:min(380px,calc(100% - 32px))}
+dialog::backdrop{background:#0009}
+dialog h3{margin:0 0 8px}
+dialog input{width:100%;margin:6px 0;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit}
+#am{color:var(--c4);min-height:1.3em;margin:6px 0}
+.dbtn{display:flex;gap:8px;flex-wrap:wrap}
+.dbtn button{border-radius:10px;padding:10px 16px;font-weight:600;border:0;background:var(--c3);color:#111}
+.dbtn .gh{background:transparent;color:var(--ink);border:1px solid var(--line)}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){.sym,.blob{animation:none}.sym{opacity:.2}#demo.on{animation:none}.lv{transition:none}}
+.grad{background:linear-gradient(90deg,var(--c2),var(--c3),var(--c4),var(--c2));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 8s linear infinite}
+@keyframes flow{to{background-position:300% 0}}
+@keyframes up{from{opacity:0;transform:translateY(26px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shine{to{left:130%}}
+#welcome{display:grid;gap:26px;align-items:center}
+@media(min-width:860px){#welcome{grid-template-columns:1.1fr 1fr;gap:48px;min-height:72vh}}
+#welcome h1{margin:14px 0 12px}
+#welcome .lead{margin-bottom:0}
+.txt>*{animation:up .7s both}.txt>:nth-child(2){animation-delay:.12s}.txt>:nth-child(3){animation-delay:.24s}
+.badge{display:inline-block;margin-top:5vh;border:1px solid var(--line);background:var(--card);backdrop-filter:blur(8px);border-radius:999px;padding:4px 14px;font-weight:600;font-size:.9rem}
+.acard{position:relative;border-radius:24px;padding:2px;overflow:hidden;box-shadow:0 24px 60px -24px #0007;animation:up .8s .3s both}
+.acard::before{content:"";position:absolute;inset:-60%;background:conic-gradient(var(--c1),var(--c2),var(--c4),var(--c3),var(--c1));animation:spin 7s linear infinite}
+.ain{position:relative;background:var(--bg);border-radius:22px;padding:22px}
+.seg2{position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.seg2 i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:var(--bg);border-radius:9px;transition:transform .3s cubic-bezier(.4,1.3,.5,1)}
+.seg2.lg i{transform:translateX(100%)}
+.seg2 button{position:relative;background:none;border:0;padding:10px 6px;font-weight:600;color:var(--mute)}
+.seg2 button.on{color:var(--ink)}
+.fld{margin:10px 0;position:relative}
+.fld input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;transition:box-shadow .2s,border-color .2s}
+.fld input:focus{outline:none;border-color:var(--c2);box-shadow:0 0 0 4px color-mix(in srgb,var(--c2) 25%,transparent)}
+.pwf input{padding-right:48px}
+#eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;padding:8px;opacity:.7}
+#am.ok{color:var(--c1)}
+.cta{width:100%;margin-top:4px;padding:14px;border:0;border-radius:12px;font-weight:800;font-size:1.05rem;color:#101030;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c1));background-size:300% 100%;animation:flow 6s linear infinite;position:relative;overflow:hidden;transition:transform .15s}
+.cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,#fff9,transparent);transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite}
+.cta:active{transform:scale(.98)}.cta:disabled{opacity:.6}
+@media(prefers-reduced-motion:reduce){.grad,.cta,.cta::after,.acard::before,.txt>*,.acard{animation:none!important}}
+#home h1{margin-top:4vh}
+.ptabs{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.ptabs button{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:600;backdrop-filter:blur(8px)}
+.ptabs button.on{background:var(--c3);color:#111;border-color:transparent}
+.st{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.st div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;backdrop-filter:blur(8px)}
+.st b{display:block;font-size:1.6rem}.st span{color:var(--mute);font-size:.82rem}
+.row2{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.row2 small{color:var(--mute)}
+.pill{display:inline-block;border:1px solid var(--c);color:var(--c);border-radius:999px;padding:0 10px;font-size:.8rem;margin-right:8px;font-weight:600}
+.sl{display:block;color:var(--mute);margin:14px 0 6px;font-size:.9rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 16px}
+.chip.sel{background:var(--c,var(--c3));color:#111;border-color:transparent;font-weight:600}
+#tp{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit}
+#tp option{color:#111}
+.go2{width:100%;margin-top:18px;padding:13px;border:0;border-radius:12px;background:var(--c);color:#111;font-weight:800;font-size:1.05rem}
+.lnk{background:none;border:0;color:var(--mute);text-decoration:underline;padding:8px 0;margin-top:6px}
+.box2{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:16px 0;backdrop-filter:blur(8px)}
+.box2 input{width:100%;margin:2px 0 10px;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit}
+.box2 button{background:var(--c3);color:#111;border:0;border-radius:10px;padding:10px 16px;font-weight:600}
+#pm{min-height:1.3em;margin:10px 0 0;font-weight:600}#pm.ok{color:var(--c1)}#pm.er{color:var(--c4)}
+</style>
+<script>
+(function(){function show(m){var d=document.getElementById("errb");if(!d){d=document.createElement("div");d.id="errb";d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#b3261e;color:#fff;padding:10px 12px;border-radius:10px;font:13px/1.4 system-ui;white-space:pre-wrap";document.documentElement.appendChild(d)}d.textContent=m}
+addEventListener("error",function(e){show("Xato: "+(e.message||"nomaʼlum")+(e.lineno?" (qator "+e.lineno+")":""))});
+addEventListener("unhandledrejection",function(e){show("Xato: "+(e.reason&&e.reason.message||e.reason))})})();
+</script>
+</head>
+<body>
+<div id="bg"><div class="blob a"></div><div class="blob b"></div></div>
+<main>
+<header><div class="logo">MS<i>test</i></div><div style="display:flex;gap:8px"><button id="auth" hidden>Chiqish</button><button id="theme" aria-label="Mavzuni almashtirish">Mavzu</button></div></header>
+<section id="welcome">
+<div class="txt">
+<div class="badge">Milliy sertifikat · SAT</div>
+<h1 class="grad">Imtihonga tayyorlanishni bugun boshla</h1>
+<p class="lead">Roʻyxatdan oʻting va oʻz darajangizdagi testlarni yeching.</p>
+</div>
+<div class="acard"><div class="ain">
+<div class="seg2" id="seg2"><i></i><button id="tr" class="on">Roʻyxatdan oʻtish</button><button id="tl">Kirish</button></div>
+<div class="fld" id="nmw"><input id="nm" placeholder="Ismingiz" autocomplete="name"></div>
+<div class="fld"><input id="em" type="email" placeholder="Email" autocomplete="email"></div>
+<div class="fld pwf"><input id="pw" type="password" placeholder="Parol (kamida 6 belgi)" autocomplete="new-password"><button id="eye" type="button" aria-label="Parolni koʻrsatish">👁</button></div>
+<p id="am" role="status"></p>
+<button id="go" class="cta">Roʻyxatdan oʻtish</button>
+<button id="fp" class="lnk" type="button" hidden>Parolni unutdim</button>
+</div></div>
+</section>
+<div id="home" hidden>
+<nav class="ptabs" id="ptabs"><button data-v="t" class="on">Testlar</button><button data-v="p">Profil</button><button data-v="e">Xatolar</button><button data-v="b">Reyting</button></nav>
+<div id="v-t">
+<h1>Imtihoningga oʻz darajangdan tayyorlan</h1>
+<p class="lead">Darajani tanla, sozlamalarni belgila va testni boshla.</p>
+<div class="grid" id="grid"></div>
+</div>
+<div id="v-p" hidden></div>
+<div id="v-e" hidden></div>
+<div id="v-b" hidden></div>
+</div>
+<section id="demo" aria-live="polite">
+<div class="bar"><h3 id="dl"></h3><div id="tm"></div></div>
+<div id="test"><div class="dots" id="dots"></div><div id="q"></div><div class="opts" id="opts"></div>
+</div>
+<div id="res"></div>
+<button id="close">Yopish</button>
+</section>
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>if(typeof supabase==="undefined"){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"><\/script>')}</script>
+<script>
+const SB=supabase.createClient("https://mfxsbeajzfmpaswiaqac.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4");
+const L=[{n:"Boshlangʻich",k:"boshlangich",d:"Asosiy amallar va oddiy masalalar",c:"--c1"},{n:"Oʻrta",k:"orta",d:"Tenglamalar, funksiyalar, geometriya",c:"--c2"},{n:"MS",k:"ms",d:"Milliy sertifikat imtihoni formatida",c:"--c3"},{n:"SAT",k:"sat",d:"Math va Reading & Writing mashqlari",c:"--c4"}];
+const $=id=>document.getElementById(id),demo=$("demo"),esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),
+mmss=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"),
+ERR=m=>/invalid login/i.test(m)?"Email yoki parol xato.":/already registered/i.test(m)?"Bu email bilan akkaunt bor.":/different from the old/i.test(m)?"Yangi parol eskisidan farq qilishi kerak.":/rate limit/i.test(m)?"Juda koʻp urinish. Birozdan keyin qayta urining.":m;
+let lv,qs,ans,ix,tl,iv,lock=false,rn=0,done=false,user=null,reg=true;
+const setU=s=>{user=s?s.user:null;$("auth").hidden=!user;$("welcome").hidden=!!user;$("home").hidden=!user;
+if(!user&&demo.classList.contains("on")){rn++;clearInterval(iv);demo.classList.remove("on");document.body.classList.remove("paused")}};
+SB.auth.getSession().then(r=>setU(r.data.session));SB.auth.onAuthStateChange((ev,s)=>{setU(s);if(ev==="PASSWORD_RECOVERY")setTimeout(()=>openTab("p","Yangi parolni kiriting va «Parolni yangilash» tugmasini bosing."),0)});
+function mode(r){reg=r;$("seg2").classList.toggle("lg",!r);$("tr").classList.toggle("on",r);$("tl").classList.toggle("on",!r);$("nmw").hidden=!r;
+$("go").textContent=r?"Roʻyxatdan oʻtish":"Kirish";$("pw").autocomplete=r?"new-password":"current-password";$("am").textContent="";$("am").className="";$("fp").hidden=r}
+$("fp").onclick=async()=>{const e=$("em").value.trim(),am=$("am");am.className="";
+if(!e){am.textContent="Avval email manzilingizni kiriting.";return}
+const {error}=await SB.auth.resetPasswordForEmail(e,{redirectTo:location.origin+location.pathname});
+if(error){am.textContent=ERR(error.message);return}am.className="ok";am.textContent="Parolni tiklash havolasi emailingizga yuborildi."};
+$("tr").onclick=()=>mode(true);$("tl").onclick=()=>mode(false);
+$("eye").onclick=()=>{const p=$("pw");p.type=p.type==="password"?"text":"password"};
+$("auth").onclick=()=>SB.auth.signOut();
+$("go").onclick=async()=>{const e=$("em").value.trim(),p=$("pw").value,am=$("am");am.textContent="";am.className="";
+if(!e||p.length<6){am.textContent="Email va kamida 6 belgili parol kiriting.";return}
+$("go").disabled=true;
+try{const r=reg?await SB.auth.signUp({email:e,password:p,options:{data:{full_name:$("nm").value.trim()}}}):await SB.auth.signInWithPassword({email:e,password:p});
+if(r.error){am.textContent=ERR(r.error.message);return}
+if(reg&&!r.data.session){am.className="ok";am.textContent="Emailingizga tasdiqlash xati yuborildi."}}
+catch(x){am.textContent="Tarmoq xatosi. Qayta urinib koʻring."}finally{$("go").disabled=false}};
+L.forEach((l,i)=>{const b=document.createElement("button");b.className="lv";b.style.setProperty("--c","var("+l.c+")");
+b.innerHTML="<h2>"+l.n+"</h2><p>"+l.d+"</p><span>Testni boshlash</span>";b.onclick=()=>start(i);$("grid").appendChild(b)});
+let pool=[];
+const fd=d=>String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."+d.getFullYear();
+async function start(i){if(!user)return;
+lv=L[i];rn++;clearInterval(iv);done=false;lock=false;
+demo.style.setProperty("--c","var("+lv.c+")");$("dl").textContent=lv.n;$("tm").textContent="";$("test").style.display="none";$("res").textContent="Savollar yuklanmoqda...";
+demo.classList.add("on");document.body.classList.add("paused");demo.scrollIntoView({behavior:"smooth",block:"center"});
+const {data,error}=await SB.from("questions_public").select("id,body,options,topic").eq("level",lv.k).limit(1000);
+if(error||!data||!data.length){$("res").textContent=error?"Xatolik: "+error.message:"Bu darajada savollar hali yoʻq.";return}
+pool=data;const T=[...new Set(data.map(q=>q.topic).filter(Boolean))].sort();let cnt=10,per=60;
+const chips=(id,vals,def,fmt)=>'<div class="chips" id="'+id+'">'+vals.map(v=>'<button class="chip'+(v===def?" sel":"")+'" data-v="'+v+'">'+fmt(v)+"</button>").join("")+"</div>";
+$("res").innerHTML='<label class="sl" for="tp">Mavzu</label><select id="tp"><option value="">Hammasi ('+data.length+')</option>'+T.map(t=>"<option>"+esc(t)+"</option>").join("")+'</select><span class="sl">Savollar soni</span>'+chips("cn",[5,10,20],10,v=>v)+'<span class="sl">Har bir savolga vaqt</span>'+chips("pr",[30,60,90],60,v=>v+" soniya")+'<button class="go2" id="gs">Boshlash</button>';
+["cn","pr"].forEach(id=>$(id).onclick=e=>{const b=e.target.closest("button");if(!b)return;[...$(id).children].forEach(x=>x.classList.toggle("sel",x===b));if(id==="cn")cnt=+b.dataset.v;else per=+b.dataset.v});
+$("gs").onclick=()=>begin(cnt,per,$("tp").value)}
+function begin(cnt,per,topic){const P=topic?pool.filter(q=>q.topic===topic):pool;
+qs=[...P].sort(()=>Math.random()-.5).slice(0,cnt);ans=qs.map(()=>null);ix=0;tl=qs.length*per;
+$("res").innerHTML="";$("test").style.display="";$("tm").textContent=mmss(tl);clearInterval(iv);
+iv=setInterval(()=>{tl--;$("tm").textContent=mmss(Math.max(tl,0));if(tl<=0)finish()},1000);render()}
+const V={t:$("v-t"),p:$("v-p"),e:$("v-e"),b:$("v-b")};
+function openTab(k,note){if(demo.classList.contains("on"))$("close").click();
+[...$("ptabs").children].forEach(x=>x.classList.toggle("on",x.dataset.v===k));Object.keys(V).forEach(x=>V[x].hidden=x!==k);
+if(k==="p")loadProfile(note);if(k==="e")loadMistakes();if(k==="b")loadBoard(null)}
+$("ptabs").onclick=e=>{const b=e.target.closest("button");if(b)openTab(b.dataset.v)};
+async function loadProfile(note){const v=V.p;v.innerHTML='<p class="lead">Yuklanmoqda...</p>';
+const {data,error}=await SB.from("attempts").select("level,score,total,started_at").eq("user_id",user.id).not("score","is",null).order("started_at",{ascending:false}).limit(100);
+if(error){v.textContent="Xatolik: "+error.message;return}
+const nm=(user.user_metadata&&user.user_metadata.full_name)||user.email,pc=a=>a.total?Math.round(a.score/a.total*100):0,
+avg=data.length?Math.round(data.reduce((s,a)=>s+pc(a),0)/data.length):0,best=data.length?Math.max(...data.map(pc)):0;
+v.innerHTML='<h1 style="margin:24px 0 6px;font-size:2rem"></h1><div class="st"><div><b>'+data.length+'</b><span>Yechilgan testlar</span></div><div><b>'+avg+'%</b><span>Oʻrtacha natija</span></div><div><b>'+best+'%</b><span>Eng yaxshi natija</span></div></div>'+
+'<div class="box2"><h3 style="margin:0 0 8px">Maʼlumotlarim</h3><label class="sl" for="pn">Ism</label><input id="pn" autocomplete="name"><button id="sn">Ismni saqlash</button>'+
+'<label class="sl" for="pp">Yangi parol</label><input id="pp" type="password" autocomplete="new-password" placeholder="Kamida 6 belgi"><button id="sp">Parolni yangilash</button><p id="pm" role="status"></p></div><div id="hist"></div>';
+v.firstChild.textContent="Salom, "+nm;$("pn").value=(user.user_metadata&&user.user_metadata.full_name)||"";
+const pm=(t,e)=>{$("pm").textContent=t;$("pm").className=e?"er":"ok"};
+$("sn").onclick=async()=>{const n=$("pn").value.trim();if(!n)return pm("Ismni kiriting.",1);
+const r=await SB.rpc("update_my_name",{p_name:n});if(r.error)return pm("Xato: "+r.error.message,1);
+await SB.auth.updateUser({data:{full_name:n}});v.firstChild.textContent="Salom, "+n;pm("Ism saqlandi.")};
+$("sp").onclick=async()=>{const p=$("pp").value;if(p.length<6)return pm("Parol kamida 6 belgidan iborat boʻlsin.",1);
+const r=await SB.auth.updateUser({password:p});if(r.error)return pm(ERR(r.error.message),1);$("pp").value="";pm("Parol yangilandi.")};
+if(note)pm(note);
+const H=$("hist");
+if(!data.length){H.innerHTML='<p class="lead">Hali test yechmagansiz. «Testlar» boʻlimidan boshlang.</p>';return}
+data.forEach(a=>{const i=L.findIndex(l=>l.k===a.level),d=document.createElement("div");d.className="row2";const l=document.createElement("div");
+l.innerHTML='<span class="pill" style="--c:var('+(i>=0?L[i].c:"--c3")+')">'+esc(i>=0?L[i].n:a.level)+"</span><small>"+fd(new Date(a.started_at))+"</small>";
+const r=document.createElement("b");r.textContent=a.score+"/"+a.total+" · "+pc(a)+"%";d.append(l,r);H.appendChild(d)})}
+async function loadMistakes(){const v=V.e;
+v.innerHTML='<h1 style="margin:24px 0 6px;font-size:2rem">Xatolar ustida ishlash</h1><p class="lead" style="margin:0 0 14px">Oxirgi marta xato qilgan savollaringiz. Toʻgʻri javob bersangiz, roʻyxatdan chiqadi.</p><div id="ml">Yuklanmoqda...</div>';
+const {data,error}=await SB.from("answers").select("id,question_id,is_correct,attempts!inner(user_id)").eq("attempts.user_id",user.id).order("id",{ascending:false}).limit(2000),M=$("ml");
+if(error){M.textContent="Xatolik: "+error.message;return}
+const seen=new Set(),ids=[];data.forEach(a=>{if(seen.has(a.question_id))return;seen.add(a.question_id);if(!a.is_correct)ids.push(a.question_id)});
+if(!ids.length){M.textContent=data.length?"Hozircha xatolaringiz yoʻq. Barakalla!":"Hali test yechmagansiz.";return}
+const q=await SB.from("questions_public").select("id,level,body,options,topic").in("id",ids.slice(0,300));
+if(q.error){M.textContent="Xatolik: "+q.error.message;return}
+M.innerHTML="";L.forEach((l,i)=>{const list=q.data.filter(x=>x.level===l.k);if(!list.length)return;
+const d=document.createElement("div"),a=document.createElement("div");d.className="row2";
+a.innerHTML='<span class="pill" style="--c:var('+l.c+')">'+l.n+"</span><small>"+list.length+" ta xato</small>";
+const b=document.createElement("button");b.className="chip sel";b.style.setProperty("--c","var("+l.c+")");b.textContent="Mashq qilish";b.onclick=()=>startMistakes(i,list);d.append(a,b);M.appendChild(d)});
+if(!M.children.length)M.textContent="Hozircha xatolaringiz yoʻq. Barakalla!"}
+function startMistakes(i,list){lv=L[i];rn++;clearInterval(iv);done=false;lock=false;pool=list;
+demo.style.setProperty("--c","var("+lv.c+")");$("dl").textContent=lv.n+" · xatolar";demo.classList.add("on");document.body.classList.add("paused");
+begin(Math.min(20,list.length),60,"");demo.scrollIntoView({behavior:"smooth",block:"center"})}
+async function loadBoard(k){const v=V.b;
+v.innerHTML='<h1 style="margin:24px 0 10px;font-size:2rem">Reyting</h1><div class="chips" id="bf"></div><p class="lead" style="margin:12px 0">Eng yaxshi natija boʻyicha (kamida 5 savolli testlar). Faqat ism koʻrsatiladi.</p><div id="bl">Yuklanmoqda...</div>';
+[[null,"Hammasi"],...L.map(l=>[l.k,l.n])].forEach(([key,n])=>{const b=document.createElement("button");b.className="chip"+(key===k?" sel":"");b.textContent=n;b.onclick=()=>loadBoard(key);$("bf").appendChild(b)});
+const {data,error}=await SB.rpc("leaderboard",{p_level:k}),B=$("bl");
+if(error){B.textContent="Xatolik: "+error.message;return}
+if(!data.length){B.textContent="Hozircha natijalar yoʻq.";return}
+B.innerHTML="";data.forEach((r,i)=>{const d=document.createElement("div");d.className="row2";const a=document.createElement("div");
+a.textContent=(["🥇","🥈","🥉"][i]||(i+1)+".")+" "+r.name;const b=document.createElement("b");b.textContent=r.best+"% · "+r.tests+" ta test";d.append(a,b);B.appendChild(d)})}
+function render(){const t=qs[ix];$("q").textContent=(ix+1)+". "+t.body;$("dots").innerHTML="";
+qs.forEach((_,k)=>{const d=document.createElement("span");d.className="dot"+(ans[k]!==null?" on":"")+(k===ix?" cur":"");d.textContent=k+1;$("dots").appendChild(d)});
+const o=$("opts");o.innerHTML="";t.options.forEach((x,k)=>{const b=document.createElement("button");b.className="opt"+(ans[ix]===k?" sel":"");b.textContent=x;
+b.onclick=()=>{if(lock)return;lock=true;ans[ix]=k;const r=rn;render();setTimeout(()=>{if(r!==rn||done)return;lock=false;if(ix===qs.length-1)finish();else{ix++;render()}},350)};o.appendChild(b)})}
+async function finish(){if(done)return;done=true;clearInterval(iv);$("test").style.display="none";$("res").textContent="Natija hisoblanmoqda...";
+const {data,error}=await SB.rpc("submit_attempt",{p_level:lv.k,p_answers:qs.map((q,k)=>({question_id:q.id,chosen_index:ans[k]}))});
+if(error){$("res").textContent="Xatolik: "+error.message;return}
+const M={};(data.results||[]).forEach(r=>M[r.question_id]=r);let h="";
+qs.forEach((q,k)=>{const r=M[q.id]||{},ok=r.is_correct;h+='<div class="r">'+(k+1)+". "+esc(q.body)+"<br>"+(ok?"✔ ":"✘ ")+"Sizning javobingiz: "+(ans[k]===null?"—":esc(q.options[ans[k]]))+(ok?"":" · Toʻgʻrisi: "+esc(q.options[r.correct_index]))+(r.explanation?"<br><small>"+esc(r.explanation)+"</small>":"")+"</div>"});
+$("res").innerHTML='<div class="big">'+data.score+" / "+data.total+"</div>"+h+'<div class="nav"><button id="again">Qayta yechish</button></div>';
+$("again").onclick=()=>start(L.indexOf(lv))}
+$("close").onclick=()=>{rn++;clearInterval(iv);demo.classList.remove("on");document.body.classList.remove("paused")};
+const S="∑ π √ ∫ x² ≈ ± Δ θ ∞ % 1 2 3 7 8 + − ×".split(" "),bg=$("bg");
+for(let i=0;i<22;i++){const s=document.createElement("span");s.className="sym";s.textContent=S[i%S.length];
+s.style.left=(Math.random()*96)+"%";s.style.fontSize=(18+Math.random()*34)+"px";
+s.style.animationDuration=(16+Math.random()*18)+"s";s.style.animationDelay=(-Math.random()*30)+"s";bg.appendChild(s)}
+$("theme").onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+const t=dark?"light":"dark";r.dataset.theme=t;try{localStorage.setItem("theme",t)}catch(e){}};
+try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}
+</script>
+</body>
+</html>
