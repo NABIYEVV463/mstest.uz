@@ -6,15 +6,13 @@
 <title>MStest Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#ffffff;--line:#d6d3f3;--acc:#5a3df0;--accink:#fff;--c1:#12a36a;--c2:#1b8fd1;--c3:#c98400;--c4:#e0405c;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#ffffff;--line:#d6d3f3;--acc:#5a3df0;--accink:#fff;--c1:#12a36a;--c2:#1b8fd1;--c3:#c98400;--c4:#e0405c}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}}
 :root[data-theme="dark"]{--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.45}
 main{max-width:1100px;margin:0 auto;padding:16px 16px 56px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .logo{font-weight:800;font-size:1.2rem}.logo small{font-weight:400;color:var(--mute);margin-left:8px}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -46,7 +44,7 @@ select option{color:#111}
 #csv{min-height:110px;font-family:ui-monospace,Menlo,monospace;font-size:.82rem}
 .hint{color:var(--mute);font-size:.85rem;margin:0 0 8px}
 .empty{color:var(--mute);padding:18px 0}
-.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .tab{background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:600}
 .tab.on,.seg button.on{background:var(--acc);color:var(--accink);border-color:transparent}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
@@ -62,48 +60,114 @@ select option{color:#111}
 .urow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-top:1px solid var(--line)}
 .urow small{color:var(--mute)}
 [hidden]{display:none!important}
-body:not(.ok) :is(.tabs,#tab-q,#tab-u){display:none!important}body.ok #gate{display:none}
+body:not(.ok) :is(.tabs,#tab-q,#tab-u,#tab-t){display:none!important}body.ok #gate{display:none}
 </style>
 </head>
 <body>
 <main>
-<header><div class="logo">MS<span style="color:var(--c3)">test</span><small>Admin</small></div><div style="display:flex;gap:8px"><a class="btn ghost" href="./" style="text-decoration:none">Sayt</a><button class="btn ghost" id="theme">Mavzu</button></div></header>
+<header>
+  <div class="logo">MS<span style="color:var(--c3)">test</span><small>Admin</small></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn ghost" href="./" style="text-decoration:none">Sayt</a>
+    <button class="btn ghost" id="theme">Mavzu</button>
+  </div>
+</header>
 <div id="gate" class="box" style="max-width:480px;margin:40px auto"><p>Tekshirilmoqda...</p></div>
-<nav class="tabs"><button class="tab on" data-t="q">Savollar</button><button class="tab" data-t="u">Foydalanuvchilar</button></nav>
+
+<nav class="tabs">
+  <button class="tab on" data-t="q">Savollar</button>
+  <button class="tab" data-t="t">Testlar</button>
+  <button class="tab" data-t="u">Foydalanuvchilar</button>
+</nav>
+
+<!-- SAVOLLAR -->
 <div class="layout" id="tab-q">
 <div>
 <section class="box">
 <h2>Yangi savol</h2>
+
+<label for="subj">Fan *</label>
+<select id="subj"></select>
+
+<label for="test">Test *</label>
+<select id="test"><option value="">Avval fan tanlang</option></select>
+
 <div class="row">
 <div><label for="lvl">Daraja</label><select id="lvl"></select></div>
 <div><label for="diff">Qiyinlik</label><select id="diff"><option>Oson</option><option>Oʻrtacha</option><option>Qiyin</option></select></div>
 </div>
+
 <label for="topic">Mavzu</label><input id="topic" placeholder="Masalan: Kvadrat tenglama">
 <label for="qt">Savol matni</label><textarea id="qt" placeholder="Savolni yozing"></textarea>
 <label>Variantlar (toʻgʻrisini belgilang)</label>
 <div id="opts"></div>
 <label for="exp">Yechim izohi</label><textarea id="exp"></textarea>
 <label for="src">Manba</label><select id="src"><option>MS imtihoni</option><option>Oʻzim yozdim</option><option>Boshqa</option></select>
-<div class="btns"><button class="btn" id="save">Savolni saqlash</button><button class="btn ghost" id="clear">Tozalash</button></div>
+
+<div class="btns">
+  <button class="btn" id="save">Savolni saqlash</button>
+  <button class="btn ghost" id="clear">Tozalash</button>
+</div>
 <div id="msg" role="status"></div>
 </section>
+
 <section class="box">
 <h2>CSV orqali yuklash</h2>
 <p class="hint">Ustunlar: daraja, mavzu, savol, A, B, C, D, toʻgʻri (A–D), izoh, manba, qiyinlik</p>
 <input type="file" id="file" accept=".csv,text/csv">
 <label for="csv">Yoki shu yerga qoʻying</label>
 <textarea id="csv" spellcheck="false"></textarea>
-<div class="btns"><button class="btn" id="imp">Yuklash</button><button class="btn ghost" id="exp2">Mavjudlarni CSV qilish</button></div>
+<div class="btns">
+  <button class="btn" id="imp">Yuklash</button>
+  <button class="btn ghost" id="exp2">Mavjudlarni CSV qilish</button>
+</div>
 </section>
 </div>
+
 <section class="box">
 <h2>Savollar bazasi <span id="cnt" style="color:var(--mute);font-weight:400"></span></h2>
-<div class="filters"><select id="f1" aria-label="Daraja boʻyicha"></select><input id="f2" placeholder="Qidirish: mavzu yoki matn"></div>
+<div class="filters">
+  <select id="f0" aria-label="Fan"></select>
+  <select id="f1" aria-label="Daraja"></select>
+</div>
+<input id="f2" placeholder="Qidirish: mavzu yoki matn" style="margin-bottom:8px">
 <div id="list"></div>
 </section>
 </div>
-<div id="tab-u" hidden>
 
+<!-- TESTLAR -->
+<div id="tab-t" hidden>
+<section class="box">
+<h2>Yangi test</h2>
+<label for="t-subj">Fan *</label>
+<select id="t-subj"></select>
+<label for="t-name">Test nomi *</label>
+<input id="t-name" placeholder="Masalan: Kvadrat tenglamalar">
+<label for="t-desc">Tavsif</label>
+<input id="t-desc" placeholder="Qisqa izoh">
+<div class="row">
+<div><label for="t-lvl">Daraja</label><select id="t-lvl"></select></div>
+<div><label for="t-diff">Qiyinlik</label><select id="t-diff"><option>Oson</option><option>Oʻrtacha</option><option>Qiyin</option></select></div>
+</div>
+<div class="row">
+<div><label for="t-dur">Davomiylik (daqiqa)</label><input type="number" id="t-dur" value="30" min="1"></div>
+<div><label for="t-qc">Savollar soni</label><input type="number" id="t-qc" value="20" min="1"></div>
+</div>
+<div class="btns">
+  <button class="btn" id="t-save">Testni saqlash</button>
+  <button class="btn ghost" id="t-clear">Tozalash</button>
+</div>
+<div id="t-msg" style="min-height:1.4em;margin-top:10px;font-weight:600;color:var(--c1)"></div>
+</section>
+
+<section class="box">
+<h2>Testlar roʻyxati <span id="t-cnt" style="color:var(--mute);font-weight:400"></span></h2>
+<div id="t-list"></div>
+</section>
+</div>
+
+<!-- FOYDALANUVCHILAR -->
+<div id="tab-u" hidden>
 <div class="stats" id="stats"></div>
 <section class="box">
 <h2>Roʻyxatdan oʻtganlar dinamikasi</h2>
@@ -117,89 +181,307 @@ body:not(.ok) :is(.tabs,#tab-q,#tab-u){display:none!important}body.ok #gate{disp
 </section>
 </div>
 </main>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-const SB=supabase.createClient("https://mfxsbeajzfmpaswiaqac.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4");
-const LV=[["Boshlangʻich","--c1","boshlangich"],["Oʻrta","--c2","orta"],["MS","--c3","ms"],["SAT","--c4","sat"]],$=id=>document.getElementById(id),
-nz=s=>String(s||"").toLowerCase().replace(/[^a-z]/g,""),AB=["A","B","C","D"];
-let Q=[],U=[];
-const gate=t=>{$("gate").innerHTML="<p></p><a class=\"btn\" href=\"./\" style=\"text-decoration:none;display:inline-block\">Asosiy sayt</a>";$("gate").firstChild.textContent=t};
-const mapQ=r=>({id:r.id,lv:Math.max(0,LV.findIndex(l=>l[2]===r.level)),topic:r.topic||"",q:r.body,o:r.options,a:r.correct_index,exp:r.explanation||"",src:r.source||"",diff:r.difficulty||""});
-LV.forEach((l,i)=>{$("lvl").add(new Option(l[0],i));$("f1").add(new Option(l[0],i))});
-$("f1").insertBefore(new Option("Barcha darajalar","all"),$("f1").firstChild);$("f1").value="all";
-AB.forEach((x,i)=>{const d=document.createElement("div");d.className="opt";
-d.innerHTML='<input type="radio" name="ok" value="'+i+'" aria-label="'+x+' toʻgʻri"'+(i?"":" checked")+'><b>'+x+'</b><input id="o'+i+'" aria-label="Variant '+x+'">';$("opts").appendChild(d)});
-function msg(t,e){$("msg").textContent=t;$("msg").className=e?"err":""}
-async function init(){
-const {data:{session}}=await SB.auth.getSession();
-if(!session)return gate("Admin panelga kirish uchun avval asosiy saytda tizimga kiring, keyin qaytib keling.");
-const {data:p,error}=await SB.from("profiles").select("role").eq("id",session.user.id).maybeSingle();
-if(error||!p||p.role!=="admin")return gate("Sizda admin huquqi yoʻq.");
-document.body.classList.add("ok");await Promise.all([loadQ(),loadU()])}
-async function loadQ(){const {data,error}=await SB.from("questions").select("*").order("id",{ascending:false}).limit(1000);
-if(error){msg("Yuklashda xato: "+error.message,1);return}Q=data.map(mapQ);draw()}
-async function loadU(){const {data,error}=await SB.from("profiles").select("full_name,email,created_at").order("created_at",{ascending:false}).limit(5000);
-if(error)return;U=data.map(r=>({name:r.full_name||"Ismsiz",email:r.email||"—",d:new Date(r.created_at)}));stats();chart();ulist()}
-$("save").onclick=async()=>{const q=$("qt").value.trim(),o=AB.map((_,i)=>$("o"+i).value.trim());
-if(!q)return msg("Savol matnini yozing.",1);if(o.some(x=>!x))return msg("Barcha 4 ta variantni toʻldiring.",1);
-$("save").disabled=true;
-const {error}=await SB.from("questions").insert({level:LV[+$("lvl").value][2],topic:$("topic").value.trim()||null,body:q,options:o,correct_index:+document.querySelector("input[name=ok]:checked").value,explanation:$("exp").value.trim()||null,source:$("src").value,difficulty:$("diff").value});
-$("save").disabled=false;if(error)return msg("Xato: "+error.message,1);clr();msg("Savol saqlandi.");loadQ()};
-function clr(){["topic","qt","exp","o0","o1","o2","o3"].forEach(i=>$(i).value="");document.querySelector("input[name=ok]").checked=true}
-$("clear").onclick=()=>{clr();msg("")};
-function draw(){const f=$("f1").value,s=$("f2").value.toLowerCase(),L=$("list");L.innerHTML="";
-const r=Q.filter(x=>(f==="all"||x.lv==f)&&(x.q+" "+x.topic).toLowerCase().includes(s));
-$("cnt").textContent="("+r.length+" / "+Q.length+")";
-if(!r.length){L.innerHTML='<div class="empty">Savol topilmadi.</div>';return}
-r.forEach(x=>{const d=document.createElement("div");d.className="item";d.style.setProperty("--c","var("+LV[x.lv][1]+")");
-const a=document.createElement("div"),t=document.createElement("span");t.className="tag";t.textContent=LV[x.lv][0];
-const m=document.createElement("span");m.className="ans";m.textContent=[x.topic,x.diff,x.src].filter(Boolean).join(" · ");
-const q=document.createElement("div");q.className="q";q.textContent=x.q;
-const o=document.createElement("div");o.className="ans";x.o.forEach((v,i)=>{const e=document.createElement(i===x.a?"em":"span");e.textContent=AB[i]+") "+v+"   ";o.appendChild(e)});
-a.append(t,m,q,o);const b=document.createElement("button");b.className="del";b.textContent="Oʻchirish";
-b.onclick=async()=>{if(!confirm("Bu savol oʻchirilsinmi?"))return;const {error}=await SB.from("questions").delete().eq("id",x.id);if(error)alert(error.message);else loadQ()};
-d.append(a,b);L.appendChild(d)})}
-$("f1").onchange=draw;$("f2").oninput=draw;
-function parse(t){const R=[];let r=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];
-if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
-else if(c=='"')q=true;else if(c==","){r.push(f);f=""}
-else if(c=="\n"||c=="\r"){if(c=="\r"&&t[i+1]=="\n")i++;r.push(f);f="";if(r.some(x=>x.trim()))R.push(r);r=[]}else f+=c}
-r.push(f);if(r.some(x=>x.trim()))R.push(r);return R}
-$("imp").onclick=async()=>{const R=parse($("csv").value);if(!R.length)return msg("CSV boʻsh.",1);
-if(nz(R[0][0])==="daraja")R.shift();const rows=[];let bad=0;
-R.forEach(r=>{const li=LV.findIndex(l=>nz(l[0])===nz(r[0])),a=AB.indexOf((r[7]||"").trim().toUpperCase());
-if(li<0||!(r[2]||"").trim()||[3,4,5,6].some(k=>!(r[k]||"").trim())||a<0){bad++;return}
-rows.push({level:LV[li][2],topic:(r[1]||"").trim()||null,body:r[2].trim(),options:[3,4,5,6].map(k=>r[k].trim()),correct_index:a,explanation:(r[8]||"").trim()||null,source:(r[9]||"").trim()||"Boshqa",difficulty:(r[10]||"").trim()||"Oʻrtacha"})});
-if(!rows.length)return msg("Yaroqli qator topilmadi.",1);
-const {error}=await SB.from("questions").insert(rows);if(error)return msg("Xato: "+error.message,1);
-loadQ();msg(rows.length+" ta savol qoʻshildi"+(bad?", "+bad+" ta qator xato boʻlgani uchun oʻtkazildi.":"."))};
-$("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$("csv").value=r.result;msg("Fayl oʻqildi. «Yuklash» ni bosing.")};r.readAsText(f)};
-$("exp2").onclick=()=>{const e=v=>'"'+String(v).replace(/"/g,'""')+'"';
-$("csv").value="daraja,mavzu,savol,A,B,C,D,toʻgʻri,izoh,manba,qiyinlik\n"+Q.map(x=>[LV[x.lv][0],x.topic,x.q,...x.o,AB[x.a],x.exp,x.src,x.diff].map(e).join(",")).join("\n")};
-const now=new Date(),DAY=864e5,p2=n=>String(n).padStart(2,"0"),fd=d=>p2(d.getDate())+"."+p2(d.getMonth()+1)+"."+d.getFullYear(),
-kd=d=>d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(),km=d=>d.getFullYear()+"-"+d.getMonth(),ky=d=>d.getFullYear();
-function stats(){const c=(f,k)=>U.filter(u=>f(u.d)===k).length;
-const v=[[c(kd,kd(now)),"Bugun qoʻshildi"],[c(km,km(now)),"Shu oy"],[c(ky,ky(now)),"Shu yil"],[U.length,"Jami"]];
-$("stats").innerHTML="";v.forEach(x=>{const d=document.createElement("div");d.className="stat";d.innerHTML="<b>"+x[0]+"</b><span>"+x[1]+"</span>";$("stats").appendChild(d)})}
-let mode="d";
-function chart(){const B=[];
-if(mode==="d")for(let i=13;i>=0;i--){const d=new Date(now-i*DAY);B.push([p2(d.getDate())+"."+p2(d.getMonth()+1),U.filter(u=>kd(u.d)===kd(d)).length])}
-else if(mode==="m")for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);B.push([p2(d.getMonth()+1)+"."+String(d.getFullYear()).slice(2),U.filter(u=>km(u.d)===km(d)).length])}
-else{const y0=U.length?Math.min(...U.map(u=>u.d.getFullYear())):now.getFullYear();for(let y=y0;y<=now.getFullYear();y++)B.push([String(y),U.filter(u=>ky(u.d)===y).length])}
-const mx=Math.max(1,...B.map(b=>b[1]));$("chart").innerHTML="";
-B.forEach(b=>{const e=document.createElement("div");e.className="bar";e.innerHTML="<em>"+b[1]+"</em><i style=\"height:"+Math.round(b[1]/mx*130)+"px\"></i><span>"+b[0]+"</span>";$("chart").appendChild(e)})}
-function ulist(){const s=$("usr").value.toLowerCase(),r=U.filter(u=>(u.name+" "+u.email).toLowerCase().includes(s));
-$("ucnt").textContent="("+r.length+")";const L=$("ulist");L.innerHTML="";
-if(!r.length){L.innerHTML='<div class="empty">Topilmadi.</div>';return}
-r.forEach(u=>{const d=document.createElement("div");d.className="urow";const a=document.createElement("div"),b=document.createElement("small");
-a.textContent=u.name;b.textContent=u.email+" · "+fd(u.d);d.append(a,document.createElement("span"),b);L.appendChild(d)})}
-$("seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;mode=b.dataset.m;[...$("seg").children].forEach(x=>x.classList.toggle("on",x===b));chart()};
-$("usr").oninput=ulist;
-document.querySelector(".tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;
-[...document.querySelectorAll(".tab")].forEach(x=>x.classList.toggle("on",x===b));$("tab-q").hidden=b.dataset.t!=="q";$("tab-u").hidden=b.dataset.t!=="u"};
-$("theme").onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches,t=d?"light":"dark";r.dataset.theme=t;try{localStorage.setItem("theme",t)}catch(e){}};
-try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}
-init();
-</script>
-</body>
-</html>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+const $ = id => document.getElementById(id);
+const AB = ["A","B","C","D"];
+let SUBS = [];   // subjects
+let TESTS = [];  // tests
+let Q = [];      // questions
+let U = [];      // users
+let currentSubjectId = null;
+
+const LV_NAMES = {
+  boshlangich:"Boshlangʻich", orta:"Oʻrta", ms:"MS", sat:"SAT",
+  ielts:"IELTS", toefl:"TOEFL", cefr:"CEFR", torfl:"TORFL",
+  oson:"Oson", qiyin:"Qiyin"
+};
+
+// ====== GATE ======
+const gate = t => {
+  $("gate").innerHTML = '<p></p><a class="btn" href="./" style="text-decoration:none;display:inline-block">Asosiy sayt</a>';
+  $("gate").firstChild.textContent = t;
+};
+
+// ====== INIT ======
+async function init() {
+  const { data: { session } } = await SB.auth.getSession();
+  if (!session) return gate("Admin panelga kirish uchun avval asosiy saytda tizimga kiring, keyin qaytib keling.");
+  const { data: p, error } = await SB.from("profiles").select("role").eq("id", session.user.id).maybeSingle();
+  if (error || !p || p.role !== "admin") return gate("Sizda admin huquqi yoʻq.");
+  document.body.classList.add("ok");
+  await loadSubjects();
+  await loadTests();
+  await Promise.all([loadQ(), loadU()]);
+}
+
+// ====== FANLAR ======
+async function loadSubjects() {
+  const { data } = await SB.from("subjects").select("*").order("id");
+  SUBS = data || [];
+  fillSubjectSelects();
+}
+
+function fillSubjectSelects() {
+  // Savol uchun
+  const s1 = $("subj"); s1.innerHTML = '<option value="">Tanlang...</option>';
+  // Test uchun
+  const s2 = $("t-subj"); s2.innerHTML = '<option value="">Tanlang...</option>';
+  // Filtr uchun
+  const s3 = $("f0"); s3.innerHTML = '<option value="all">Barcha fanlar</option>';
+
+  SUBS.forEach(s => {
+    s1.add(new Option(s.icon + " " + s.name, s.id));
+    s2.add(new Option(s.icon + " " + s.name, s.id));
+    s3.add(new Option(s.icon + " " + s.name, s.id));
+  });
+
+  // Daraja selectlar — fan tanlanganda yangilanadi
+  s1.onchange = () => { fillLevels(s1.value, $("lvl")); loadTestsForSubject(s1.value, $("test")); };
+  s2.onchange = () => { fillLevels(s2.value, $("t-lvl")); };
+}
+
+function fillLevels(subjId, selectEl) {
+  selectEl.innerHTML = "";
+  const subj = SUBS.find(s => String(s.id) === String(subjId));
+  const levels = Array.isArray(subj?.levels) ? subj.levels : ["boshlangich","orta","ms","sat"];
+  levels.forEach(lvl => selectEl.add(new Option(LV_NAMES[lvl] || lvl, lvl)));
+}
+
+// ====== TESTLAR (savol uchun) ======
+async function loadTestsForSubject(subjId, selectEl) {
+  selectEl.innerHTML = '<option value="">Yuklanmoqda...</option>';
+  if (!subjId) { selectEl.innerHTML = '<option value="">Avval fan tanlang</option>'; return; }
+  const { data } = await SB.from("tests").select("id,name").eq("subject_id", subjId).eq("is_active", true).order("id");
+  selectEl.innerHTML = "";
+  if (!data || !data.length) {
+    selectEl.innerHTML = '<option value="">Bu fanda test yoʻq — avval Testlar boʻlimida yarating</option>';
+    return;
+  }
+  selectEl.add(new Option("Tanlang...", ""));
+  data.forEach(t => selectEl.add(new Option(t.name, t.id)));
+}
+
+// ====== TESTLAR BO'LIMI ======
+async function loadTests() {
+  const { data, error } = await SB.from("tests").select("*, subjects(name,icon)").order("id", { ascending: false });
+  if (error) { $("t-list").innerHTML = '<div class="empty">Xato: ' + error.message + '</div>'; return; }
+  TESTS = data || [];
+  drawTests();
+}
+
+function drawTests() {
+  $("t-cnt").textContent = "(" + TESTS.length + ")";
+  const L = $("t-list");
+  if (!TESTS.length) { L.innerHTML = '<div class="empty">Hali test yoʻq. Yuqorida birinchi testni yarating.</div>'; return; }
+  L.innerHTML = TESTS.map(t => {
+    const sName = t.subjects?.name || "—";
+    const sIcon = t.subjects?.icon || "📚";
+    const lvl = LV_NAMES[t.level] || t.level || "";
+    return `
+      <div class="item">
+        <div>
+          <span class="tag" style="--c:var(--acc)">${sIcon} ${escapeHtml(sName)}</span>
+          <span class="tag" style="--c:var(--c2)">${escapeHtml(lvl)}</span>
+          <div class="q">${escapeHtml(t.name)}</div>
+          <div class="ans">${escapeHtml(t.description || "")} · ⏱️ ${t.duration} daq · 📝 ${t.question_count} savol</div>
+        </div>
+        <button class="del" data-id="${t.id}">Oʻchirish</button>
+      </div>
+    `;
+  }).join("");
+
+  L.querySelectorAll(".del").forEach(b => {
+    b.onclick = async () => {
+      if (!confirm("Bu test oʻchirilsinmi? Unga tegishli savollar ham testdan uziladi.")) return;
+      const { error } = await SB.from("tests").delete().eq("id", b.dataset.id);
+      if (error) alert(error.message); else loadTests();
+    };
+  });
+}
+
+$("t-save").onclick = async () => {
+  const subjId = $("t-subj").value;
+  const name = $("t-name").value.trim();
+  const desc = $("t-desc").value.trim();
+  const lvl = $("t-lvl").value;
+  const diff = $("t-diff").value;
+  const dur = +$("t-dur").value || 30;
+  const qc = +$("t-qc").value || 20;
+
+  const showT = (t, err) => { $("t-msg").textContent = t; $("t-msg").style.color = err ? "var(--c4)" : "var(--c1)"; };
+
+  if (!subjId) return showT("Fan tanlang.", 1);
+  if (!name) return showT("Test nomini yozing.", 1);
+
+  $("t-save").disabled = true;
+  const { error } = await SB.from("tests").insert({
+    subject_id: subjId,
+    name, description: desc || null,
+    level: lvl, difficulty: diff,
+    duration: dur, question_count: qc,
+    is_active: true
+  });
+  $("t-save").disabled = false;
+
+  if (error) return showT("Xato: " + error.message, 1);
+
+  showT("Test saqlandi ✅");
+  $("t-name").value = ""; $("t-desc").value = "";
+  await loadTests();
+  // Savol formasidagi test selectni ham yangilash
+  if ($("subj").value) loadTestsForSubject($("subj").value, $("test"));
+};
+
+$("t-clear").onclick = () => {
+  $("t-name").value = ""; $("t-desc").value = "";
+  $("t-msg").textContent = "";
+};
+
+// ====== SAVOLLAR ======
+LV_NAMES && Object.entries(LV_NAMES).forEach(([k,v]) => {}); // placeholder
+
+AB.forEach((x, i) => {
+  const d = document.createElement("div");
+  d.className = "opt";
+  d.innerHTML = '<input type="radio" name="ok" value="' + i + '"' + (i ? "" : " checked") + '><b>' + x + '</b><input id="o' + i + '">';
+  $("opts").appendChild(d);
+});
+
+function msg(t, e) {
+  $("msg").textContent = t;
+  $("msg").className = e ? "err" : "";
+}
+
+async function loadQ() {
+  const { data, error } = await SB.from("questions").select("*").order("id", { ascending: false }).limit(1000);
+  if (error) { msg("Yuklashda xato: " + error.message, 1); return; }
+  Q = data || [];
+  drawQ();
+}
+
+function drawQ() {
+  const f0 = $("f0").value;
+  const f1 = $("f1").value;
+  const s = ($("f2").value || "").toLowerCase();
+  const L = $("list");
+  L.innerHTML = "";
+
+  const r = Q.filter(x =>
+    (f0 === "all" || String(x.subject_id) === String(f0)) &&
+    (f1 === "all" || x.level === f1) &&
+    ((x.body || "") + " " + (x.topic || "")).toLowerCase().includes(s)
+  );
+
+  $("cnt").textContent = "(" + r.length + " / " + Q.length + ")";
+  if (!r.length) { L.innerHTML = '<div class="empty">Savol topilmadi.</div>'; return; }
+
+  r.forEach(x => {
+    const d = document.createElement("div");
+    d.className = "item";
+    const a = document.createElement("div");
+
+    const tagLvl = document.createElement("span");
+    tagLvl.className = "tag";
+    tagLvl.style.setProperty("--c", "var(--acc)");
+    tagLvl.textContent = LV_NAMES[x.level] || x.level || "";
+
+    const tagSubj = document.createElement("span");
+    tagSubj.className = "tag";
+    tagSubj.style.setProperty("--c", "var(--c2)");
+    const subj = SUBS.find(s => String(s.id) === String(x.subject_id));
+    tagSubj.textContent = (subj?.icon || "📚") + " " + (subj?.name || "—");
+
+    const m = document.createElement("span");
+    m.className = "ans";
+    m.textContent = " " + [x.topic, x.difficulty, x.source].filter(Boolean).join(" · ");
+
+    const q = document.createElement("div");
+    q.className = "q";
+    q.textContent = x.body;
+
+    const o = document.createElement("div");
+    o.className = "ans";
+    (x.options || []).forEach((v, i) => {
+      const e = document.createElement(i === x.correct_index ? "em" : "span");
+      e.textContent = AB[i] + ") " + v + "   ";
+      o.appendChild(e);
+    });
+
+    a.append(tagLvl, tagSubj, m, q, o);
+
+    const b = document.createElement("button");
+    b.className = "del";
+    b.textContent = "Oʻchirish";
+    b.onclick = async () => {
+      if (!confirm("Bu savol oʻchirilsinmi?")) return;
+      const { error } = await SB.from("questions").delete().eq("id", x.id);
+      if (error) alert(error.message); else loadQ();
+    };
+
+    d.append(a, b);
+    L.appendChild(d);
+  });
+}
+
+$("f0").onchange = () => {
+  // Daraja filtri fan o'zgarganda qayta quriladi
+  const subj = SUBS.find(s => String(s.id) === String($("f0").value));
+  const f1 = $("f1");
+  f1.innerHTML = '<option value="all">Barcha darajalar</option>';
+  const levels = Array.isArray(subj?.levels) ? subj.levels : Object.keys(LV_NAMES);
+  levels.forEach(l => f1.add(new Option(LV_NAMES[l] || l, l)));
+  drawQ();
+};
+$("f1").onchange = drawQ;
+$("f2").oninput = drawQ;
+
+// Boshlanishida f1 ni to'ldirish
+(function initF1(){
+  const f1 = $("f1");
+  f1.innerHTML = '<option value="all">Barcha darajalar</option>';
+  Object.keys(LV_NAMES).forEach(l => f1.add(new Option(LV_NAMES[l], l)));
+})();
+
+// ====== SAVOL SAQLASH ======
+$("save").onclick = async () => {
+  const subjId = $("subj").value;
+  const testId = $("test").value;
+  const q = $("qt").value.trim();
+  const o = AB.map((_, i) => $("o" + i).value.trim());
+
+  if (!subjId) return msg("Fan tanlang.", 1);
+  if (!testId) return msg("Test tanlang.", 1);
+  if (!q) return msg("Savol matnini yozing.", 1);
+  if (o.some(x => !x)) return msg("Barcha 4 ta variantni toʻldiring.", 1);
+
+  $("save").disabled = true;
+  const { error } = await SB.from("questions").insert({
+    subject_id: subjId,
+    test_id: testId,
+    level: $("lvl").value,
+    topic: $("topic").value.trim() || null,
+    body: q,
+    options: o,
+    correct_index: +document.querySelector("input[name=ok]:checked").value,
+    explanation: $("exp").value.trim() || null,
+    source: $("src").value,
+    difficulty: $("diff").value
+  });
+  $("save").disabled = false;
+
+  if (error) return msg("Xato: " + error.message, 1);
+
+  clearForm();
+  msg("Savol saqlandi ✅");
+  loadQ();
+};
+
+function clearForm() {
+  ["topic","qt","exp","o0","o1","o2","o3"].forEach(i => $(i).value = "");
+  document.querySelector("input[name=ok]").checked = tru
