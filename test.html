@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Test — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#fff;--line:#d6d3f3;--acc:#5a3df0;--accink:#fff;--c1:#12a36a;--c2:#1b8fd1;--c3:#c98400;--c4:#e0405c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}}
+:root[data-theme="dark"]{--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.5;min-height:100vh}
+main{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;color:var(--acc);text-decoration:none}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--acc),#06b6d4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.hbtn{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.86rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.hbtn:hover{border-color:var(--acc);color:var(--acc)}
+.hbtn.danger:hover{border-color:var(--c4);color:var(--c4)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.test-name{font-weight:800;font-size:1.15rem}
+.meta{color:var(--mute);font-size:.86rem}
+.timer{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-variant-numeric:tabular-nums;min-width:90px;text-align:center;transition:all .3s}
+.timer.warn{border-color:var(--c3);color:var(--c3)}
+.timer.danger{border-color:var(--c4);color:var(--c4);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.progress{height:8px;background:var(--card);border:1px solid var(--line);border-radius:100px;overflow:hidden;margin-bottom:22px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),#06b6d4);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 22px;margin-bottom:16px}
+.q-num{color:var(--mute);font-size:.86rem;font-weight:600;margin-bottom:8px}
+.q-text{font-size:1.18rem;font-weight:600;line-height:1.5;margin-bottom:22px}
+.option{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s;user-select:none}
+.option:hover{border-color:var(--acc)}
+.option.on{border-color:var(--acc);background:rgba(90,61,240,.06)}
+.option.correct{border-color:var(--c1);background:rgba(18,163,106,.08)}
+.option.wrong{border-color:var(--c4);background:rgba(224,64,92,.08)}
+.option input{display:none}
+.opt-key{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--card);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;transition:all .2s}
+.option.on .opt-key{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.option.correct .opt-key{background:var(--c1);color:#fff;border-color:var(--c1)}
+.option.wrong .opt-key{background:var(--c4);color:#fff;border-color:var(--c4)}
+.opt-text{flex:1;padding-top:3px}
+.explain{margin-top:14px;padding:14px;background:var(--bg);border-left:3px solid var(--c2);border-radius:8px;font-size:.9rem;color:var(--mute);line-height:1.5}
+.explain b{color:var(--ink)}
+.btns{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.btn{padding:12px 22px;border-radius:12px;border:0;font:inherit;font-weight:700;font-size:.94rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn.primary{background:var(--acc);color:var(--accink)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(90,61,240,.5)}
+.btn.ghost{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.result{text-align:center;padding:40px 24px}
+.result-icon{font-size:4rem;margin-bottom:14px}
+.result h1{font-size:2rem;font-weight:800;margin:0 0 8px}
+.result p{color:var(--mute);margin:0 0 24px}
+.score-big{font-size:4.5rem;font-weight:900;line-height:1;margin-bottom:8px;background:linear-gradient(135deg,var(--acc),#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-bar{height:12px;background:var(--bg);border:1px solid var(--line);border-radius:100px;overflow:hidden;margin:20px 0}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--acc),#06b6d4);transition:width .8s ease-out}
+.stats-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.stats-mini div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stats-mini b{display:block;font-size:1.5rem;font-weight:800}
+.stats-mini span{color:var(--mute);font-size:.82rem}
+.loading{text-align:center;padding:80px 20px;color:var(--mute)}
+.empty{text-align:center;padding:60px 20px;color:var(--mute)}
+.theme-btn{position:fixed;top:18px;right:18px;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+@media(max-width:600px){
+  .q-text{font-size:1.05rem}
+  .card{padding:20px 16px}
+  .score-big{font-size:3.5rem}
+}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+<main>
+  <header>
+    <a href="index.html" class="logo"><div class="logo-icon">📝</div>MStest</a>
+    <button class="hbtn danger" id="quit">Chiqish</button>
+  </header>
+  <div id="app">
+    <div class="loading">Yuklanmoqda...</div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+const $ = id => document.getElementById(id);
+const AB = ["A","B","C","D"];
+const app = $("app");
+
+let test = null;
+let questions = [];
+let current = 0;
+let answers = [];
+let timerId = null;
+let timeLeft = 0;
+let finished = false;
+let userId = null;
+
+// ====== DARK MODE ======
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const d = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const t = d ? "light" : "dark";
+  r.dataset.theme = t;
+  $("theme").textContent = t === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", t); } catch(e) {}
+};
+try {
+  const t = localStorage.getItem("theme");
+  if (t) { document.documentElement.dataset.theme = t; $("theme").textContent = t === "dark" ? "☀️" : "🌙"; }
+  else if (matchMedia("(prefers-color-scheme:dark)").matches) $("theme").textContent = "☀️";
+} catch(e) {}
+
+// ====== YORDAMCHI ======
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtTime(sec) {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+}
+
+// ====== CHIQISH ======
+$("quit").onclick = () => {
+  if (finished) { location.href = "testlar.html"; return; }
+  if (confirm("Testdan chiqmoqchimisiz? Javoblaringiz saqlanmaydi.")) {
+    if (timerId) clearInterval(timerId);
+    location.href = "testlar.html";
+  }
+};
+
+// ====== YUKLASH ======
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const testId = params.get("id");
+  if (!testId) return showEmpty("Test ID topilmadi.");
+
+  const { data: { session } } = await SB.auth.getSession();
+  userId = session?.user?.id || null;
+
+  // Test
+  const { data: t, error: te } = await SB.from("tests").select("*").eq("id", testId).maybeSingle();
+  if (te || !t) return showEmpty("Test topilmadi.");
+  test = t;
+
+  // Savollar
+  const { data: qs, error: qe } = await SB.from("questions").select("*").eq("test_id", testId).order("id");
+  if (qe) return showEmpty("Xato: " + qe.message);
+  if (!qs || !qs.length) return showEmpty("Bu testda hali savollar yo‘q.");
+
+  questions = qs;
+  answers = new Array(questions.length).fill(null);
+
+  // Timer
+  timeLeft = (test.duration || 30) * 60;
+
+  startTest();
+})();
+
+function showEmpty(text) {
+  app.innerHTML = `
+    <div class="empty">
+      <div style="font-size:3rem;margin-bottom:10px">📝</div>
+      <div>${escapeHtml(text)}</div>
+      <div style="margin-top:20px">
+        <a href="testlar.html" class="btn primary">← Testlarga qaytish</a>
+      </div>
+    </div>
+  `;
+}
+
+// ====== TESTNI BOSHLASH ======
+function startTest() {
+  timerId = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if (timeLeft <= 0) {
+      clearInterval(timerId);
+      finishTest(true);
+    }
+  }, 1000);
+  renderQuestion();
+}
+
+function updateTimer() {
+  const el = $("timer");
+  if (!el) return;
+  el.textContent = "⏱️ " + fmtTime(Math.max(0, timeLeft));
+  el.className = "timer";
+  if (timeLeft <= 60) el.classList.add("danger");
+  else if (timeLeft <= 300) el.classList.add("warn");
+}
+
+// ====== SAVOLNI KO'RSATISH ======
+function renderQuestion() {
+  const q = questions[current];
+  const total = questions.length;
+  const progress = ((current) / total) * 100;
+
+  app.innerHTML = `
+    <div class="top">
+      <div>
+        <div class="test-name">${escapeHtml(test.name)}</div>
+        <div class="meta">${current + 1} / ${total} savol</div>
+      </div>
+      <div class="timer" id="timer">⏱️ ${fmtTime(timeLeft)}</div>
+    </div>
+    <div class="progress"><div class="progress-fill" style="width:${progress}%"></div></div>
+
+    <div class="card">
+      <div class="q-num">Savol ${current + 1} / ${total}${q.topic ? " · " + escapeHtml(q.topic) : ""}</div>
+      <div class="q-text">${escapeHtml(q.body)}</div>
+      <div id="options">
+        ${(q.options || []).map((opt, i) => `
+          <div class="option ${answers[current] === i ? "on" : ""}" data-i="${i}">
+            <div class="opt-key">${AB[i]}</div>
+            <div class="opt-text">${escapeHtml(opt)}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn ghost" id="prev" ${current === 0 ? "disabled" : ""}>← Orqaga</button>
+      ${current === total - 1
+        ? `<button class="btn primary" id="finish">Yakunlash ✓</button>`
+        : `<button class="btn primary" id="next">Keyingi →</button>`
+      }
+    </div>
+  `;
+
+  updateTimer();
+
+  // Variant tanlash
+  document.querySelectorAll(".option").forEach(el => {
+    el.onclick = () => {
+      const i = +el.dataset.i;
+      answers[current] = i;
+      document.querySelectorAll(".option").forEach(x => x.classList.remove("on"));
+      el.classList.add("on");
+    };
+  });
+
+  // Oldingi
+  const prevBtn = $("prev");
+  if (prevBtn) prevBtn.onclick = () => {
+    if (current > 0) { current--; renderQuestion(); }
+  };
+
+  // Keyingi
+  const nextBtn = $("next");
+  if (nextBtn) nextBtn.onclick = () => {
+    if (answers[current] === null) {
+      if (!confirm("Javob tanlamadingiz. Davom etilsinmi?")) return;
+    }
+    if (current < total - 1) { current++; renderQuestion(); }
+  };
+
+  // Yakunlash
+  const finishBtn = $("finish");
+  if (finishBtn) finishBtn.onclick = () => {
+    const answered = answers.filter(a => a !== null).length;
+    if (answered < questions.length) {
+      if (!confirm(`Siz ${questions.length} tadan ${answered} tasiga javob berdingiz. Yakunlaysizmi?`)) return;
+    } else {
+      if (!confirm("Testni yakunlaysizmi?")) return;
+    }
+    finishTest(false);
+  };
+}
+
+// ====== YAKUNLASH ======
+async function finishTest(byTimeout) {
+  if (finished) return;
+  finished = true;
+  if (timerId) clearInterval(timerId);
+
+  let correct = 0;
+  questions.forEach((q, i) => {
+    if (answers[i] === q.correct_index) correct++;
+  });
+  const total = questions.length;
+  const percent = Math.round((correct / total) * 100);
+
+  // Saqlash
+  if (userId) {
+    try {
+      await SB.from("results").insert({
+        user_id: userId,
+        test_id: test.id,
+        test_name: test.name,
+        correct: correct,
+        total: total,
+        answers: answers
+      });
+    } catch(e) { console.error(e); }
+  }
+
+  renderResult(correct, total, percent, byTimeout);
+}
+
+function renderResult(correct, total, percent, byTimeout) {
+  let icon = "🎉", title = "Ajoyib natija!", color = "var(--c1)";
+  if (percent < 50) { icon = "📚"; title = "Yaxshilash kerak"; color = "var(--c4)"; }
+  else if (percent < 80) { icon = "👍"; title = "Yaxshi natija!"; color = "var(--c3)"; }
+
+  app.innerHTML = `
+    <div class="card result">
+      <div class="result-icon">${icon}</div>
+      <h1 style="color:${color}">${title}</h1>
+      ${byTimeout ? '<p style="color:var(--c3)">⏱️ Vaqt tugadi</p>' : ""}
+      <div class="score-big">${percent}%</div>
+      <p>${correct} / ${total} to‘g‘ri javob</p>
+      <div class="score-bar"><div class="score-fill" style="width:0%"></div></div>
+
+      <div class="stats-mini">
+        <div><b style="color:var(--c1)">${correct}</b><span>To‘g‘ri</span></div>
+        <div><b style="color:var(--c4)">${total - correct}</b><span>Xato</span></div>
+        <div><b>${total}</b><span>Jami</span></div>
+      </div>
+
+      <div class="btns" style="justify-content:center;flex-wrap:wrap">
+        <button class="btn ghost" id="review">Xatolarni ko‘rish</button>
+        <a href="testlar.html" class="btn ghost">← Testlarga</a>
+        <a href="reyting.html" class="btn primary">🏆 Reyting</a>
+      </div>
+    </div>
+
+    <div id="review-box"></div>
+  `;
+
+  // Progress animatsiya
+  setTimeout(() => {
+    const fill = document.querySelector(".score-fill");
+    if (fill) fill.style.width = percent + "%";
+  }, 100);
+
+  $("review").onclick = () => {
+    const box = $("review-box");
+    if (box.innerHTML) { box.innerHTML = ""; return; }
+    box.innerHTML = `
+      <div class="card">
+        <h2 style="margin:0 0 14px;font-size:1.1rem">Barcha savollar</h2>
+        ${questions.map((q, i) => {
+          const user = answers[i];
+          const correct = q.correct_index;
+          const isOk = user === correct;
+          return `
+            <div style="border-top:1px solid var(--line);padding:16px 0;${i===0?'border-top:0':''}">
+              <div style="font-size:.85rem;color:var(--mute);margin-bottom:4px">${i+1}-savol ${isOk ? '<span style="color:var(--c1)">✓</span>' : '<span style="color:var(--c4)">✗</span>'}</div>
+              <div style="font-weight:600;margin-bottom:10px">${escapeHtml(q.body)}</div>
+              ${(q.options || []).map((opt, j) => {
+                let cls = "option";
+                if (j === correct) cls += " correct";
+                else if (j === user) cls += " wrong";
+                return `<div class="${cls}" style="cursor:default;margin-bottom:6px">
+                  <div class="opt-key">${AB[j]}</div>
+                  <div class="opt-text">${escapeHtml(opt)}</div>
+                </div>`;
+              }).join("")}
+              ${q.explanation ? `<div class="explain"><b>Izoh:</b> ${escapeHtml(q.explanation)}</div>` : ""}
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  };
+}
+</script>
+</body>
+</html>
