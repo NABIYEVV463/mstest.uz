@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kirish — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f4f3ff; --ink:#14163a; --mute:#555880;
+  --card:#ffffff; --line:#d6d3f3;
+  --acc:#5a3df0; --accink:#fff;
+  --success:#12a36a; --danger:#e0405c;
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0b0f2e; --ink:#f1efff; --mute:#a9abd8;
+    --card:#151a4a; --line:#2c3270;
+    --acc:#9a86ff; --accink:#120c3a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0b0f2e; --ink:#f1efff; --mute:#a9abd8;
+  --card:#151a4a; --line:#2c3270;
+  --acc:#9a86ff; --accink:#120c3a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh;
+  background: var(--bg); color: var(--ink);
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.wrap {
+  width: 100%; max-width: 440px;
+}
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--mute); text-decoration: none;
+  font-size: 0.9rem; margin-bottom: 16px;
+  transition: color 0.2s;
+}
+.back:hover { color: var(--acc); }
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 10px 40px -10px rgba(90,61,240,0.15);
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 1.4rem;
+  color: var(--acc); margin-bottom: 8px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--acc), #06b6d4);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+h1 {
+  font-size: 1.5rem; font-weight: 800;
+  margin: 0 0 6px;
+}
+.sub {
+  color: var(--mute); font-size: 0.92rem;
+  margin: 0 0 24px;
+}
+.tabs {
+  display: flex; gap: 6px;
+  background: var(--bg);
+  padding: 5px; border-radius: 12px;
+  margin-bottom: 22px;
+}
+.tab {
+  flex: 1; padding: 10px;
+  background: transparent; border: 0;
+  border-radius: 8px; cursor: pointer;
+  font-weight: 600; font-size: 0.92rem;
+  color: var(--mute); transition: all 0.2s;
+  font-family: inherit;
+}
+.tab.on {
+  background: var(--card); color: var(--acc);
+  box-shadow: 0 2px 8px rgba(90,61,240,0.12);
+}
+label {
+  display: block; font-size: 0.88rem;
+  color: var(--mute); margin: 14px 0 6px;
+  font-weight: 500;
+}
+input {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font: inherit; font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none; border-color: var(--acc);
+  box-shadow: 0 0 0 3px rgba(90,61,240,0.12);
+}
+input::placeholder { color: var(--mute); opacity: 0.7; }
+.btn {
+  width: 100%; padding: 13px;
+  background: var(--acc); color: var(--accink);
+  border: 0; border-radius: 10px;
+  font: inherit; font-weight: 700; font-size: 0.98rem;
+  cursor: pointer; margin-top: 22px;
+  transition: all 0.2s;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px rgba(90,61,240,0.5);
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-link {
+  background: none; border: 0;
+  color: var(--acc); cursor: pointer;
+  font: inherit; font-weight: 600;
+  padding: 0; margin-top: 16px;
+  font-size: 0.9rem;
+  display: block; text-align: center;
+  text-decoration: none;
+}
+.btn-link:hover { text-decoration: underline; }
+.msg {
+  margin-top: 14px; padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem; font-weight: 600;
+  display: none;
+}
+.msg.on { display: block; }
+.msg.ok {
+  background: rgba(18,163,106,0.12);
+  color: var(--success);
+  border: 1px solid rgba(18,163,106,0.3);
+}
+.msg.err {
+  background: rgba(224,64,92,0.12);
+  color: var(--danger);
+  border: 1px solid rgba(224,64,92,0.3);
+}
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hidden { display: none !important; }
+.footer {
+  text-align: center; color: var(--mute);
+  font-size: 0.85rem; margin-top: 20px;
+}
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 22px 0; color: var(--mute);
+  font-size: 0.82rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--line);
+}
+.theme-btn {
+  position: fixed; top: 20px; right: 20px;
+  width: 42px; height: 42px;
+  border-radius: 12px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink);
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+</style>
+</head>
+<body>
+
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+
+<div class="wrap">
+  <a href="index.html" class="back">← Bosh sahifa</a>
+
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">📝</div>
+      MStest
+    </div>
+    <h1 id="title">Xush kelibsiz!</h1>
+    <p class="sub" id="subtitle">Hisobingizga kiring yoki yangi hisob yarating</p>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="login">Kirish</button>
+      <button class="tab" data-tab="register">Ro‘yxatdan o‘tish</button>
+    </div>
+
+    <!-- LOGIN FORMA -->
+    <form id="loginForm">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="siz@example.com" required autocomplete="email">
+
+      <label for="loginPass">Parol</label>
+      <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
+
+      <button type="submit" class="btn" id="loginBtn">Kirish</button>
+      <button type="button" class="btn-link" id="forgotBtn">Parolni unutdingizmi?</button>
+    </form>
+
+    <!-- REGISTER FORMA -->
+    <form id="registerForm" class="hidden">
+      <label for="regName">Ism familiya</label>
+      <input type="text" id="regName" placeholder="Ali Valiyev" required autocomplete="name">
+
+      <label for="regEmail">Email</label>
+      <input type="email" id="regEmail" placeholder="siz@example.com" required autocomplete="email">
+
+      <label for="regPass">Parol (kamida 6 belgi)</label>
+      <input type="password" id="regPass" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+
+      <label for="regPass2">Parolni tasdiqlang</label>
+      <input type="password" id="regPass2" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+
+      <button type="submit" class="btn" id="registerBtn">Ro‘yxatdan o‘tish</button>
+    </form>
+
+    <!-- PAROLNI TIKLASH -->
+    <form id="forgotForm" class="hidden">
+      <label for="forgotEmail">Email manzilingiz</label>
+      <input type="email" id="forgotEmail" placeholder="siz@example.com" required>
+
+      <button type="submit" class="btn" id="forgotSendBtn">Tiklash havolasini yuborish</button>
+      <button type="button" class="btn-link" id="backToLogin">← Kirishga qaytish</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="footer">
+    © 2025 MStest.uz
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+
+const $ = id => document.getElementById(id);
+const loginForm = $("loginForm"), registerForm = $("registerForm"), forgotForm = $("forgotForm");
+const msgBox = $("msg"), title = $("title"), subtitle = $("subtitle");
+
+// ===== XABAR KO'RSATISH =====
+function showMsg(text, type = "ok") {
+  msgBox.textContent = text;
+  msgBox.className = "msg on " + type;
+  setTimeout(() => { msgBox.className = "msg"; }, 6000);
+}
+
+// ===== TUGMA YUKLANISHI =====
+function setLoading(btn, loading, text = "") {
+  if (loading) {
+    btn.dataset.origText = btn.textContent;
+    btn.innerHTML = '<span class="spinner"></span>' + text;
+    btn.disabled = true;
+  } else {
+    btn.textContent = btn.dataset.origText || btn.textContent;
+    btn.disabled = false;
+  }
+}
+
+// ===== TAB ALMASHTIRISH =====
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
+  loginForm.classList.toggle("hidden", tab !== "login");
+  registerForm.classList.toggle("hidden", tab !== "register");
+  forgotForm.classList.add("hidden");
+  msgBox.className = "msg";
+
+  if (tab === "login") {
+    title.textContent = "Xush kelibsiz!";
+    subtitle.textContent = "Hisobingizga kiring";
+  } else if (tab === "register") {
+    title.textContent = "Hisob yaratish";
+    subtitle.textContent = "Bir daqiqada ro‘yxatdan o‘ting";
+  }
+}
+
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => switchTab(t.dataset.tab);
+});
+
+// ===== LOGIN =====
+loginForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const email = $("loginEmail").value.trim();
+  const pass = $("loginPass").value;
+  const btn = $("loginBtn");
+
+  setLoading(btn, true, "Kirilmoqda...");
+  const { data, error } = await SB.auth.signInWithPassword({ email, password: pass });
+  setLoading(btn, false);
+
+  if (error) {
+    if (error.message.includes("Invalid login")) showMsg("Email yoki parol xato.", "err");
+    else if (error.message.includes("Email not confirmed")) showMsg("Emailni tasdiqlang (pochtangizni tekshiring).", "err");
+    else showMsg(error.message, "err");
+    return;
+  }
+
+  showMsg("Muvaffaqiyatli kirdingiz! Yo‘naltirilmoqda...", "ok");
+  setTimeout(() => {
+    const params = new URLSearchParams(location.search);
+    const next = params.get("next") || "kabinet.html";
+    location.href = next;
+  }, 800);
+};
+
+// ===== REGISTER =====
+registerForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const name = $("regName").value.trim();
+  const email = $("regEmail").value.trim();
+  const pass = $("regPass").value;
+  const pass2 = $("regPass2").value;
+  const btn = $("registerBtn");
+
+  if (pass !== pass2) return showMsg("Parollar mos emas.", "err");
+  if (pass.length < 6) return showMsg("Parol kamida 6 belgi bo‘lishi kerak.", "err");
+  if (name.length < 2) return showMsg("Ismingizni to‘liq kiriting.", "err");
+
+  setLoading(btn, true, "Yaratilmoqda...");
+  const { data, error } = await SB.auth.signUp({
+    email,
+    password: pass,
+    options: { data: { full_name: name } }
+  });
+  setLoading(btn, false);
+
+  if (error) {
+    if (error.message.includes("already registered")) showMsg("Bu email allaqachon ro‘yxatdan o‘tgan. Kirishni urinib ko‘ring.", "err");
+    else showMsg(error.message, "err");
+    return;
+  }
+
+  // Agar email tasdiqlash yoqilgan bo'lsa
+  if (data.user && !data.session) {
+    showMsg("Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.", "ok");
+    switchTab("login");
+    return;
+  }
+
+  showMsg("Muvaffaqiyatli ro‘yxatdan o‘tdingiz! Yo‘naltirilmoqda...", "ok");
+  setTimeout(() => location.href = "kabinet.html", 800);
+};
+
+// ===== PAROLNI TIKLASH =====
+$("forgotBtn").onclick = () => {
+  loginForm.classList.add("hidden");
+  registerForm.classList.add("hidden");
+  forgotForm.classList.remove("hidden");
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  title.textContent = "Parolni tiklash";
+  subtitle.textContent = "Emailingizga tiklash havolasi yuboriladi";
+  msgBox.className = "msg";
+};
+
+$("backToLogin").onclick = () => {
+  forgotForm.classList.add("hidden");
+  switchTab("login");
+};
+
+forgotForm.onsubmit = async (e) => {
+  e.preventDefault();
+  const email = $("forgotEmail").value.trim();
+  const btn = $("forgotSendBtn");
+
+  setLoading(btn, true, "Yuborilmoqda...");
+  const { error } = await SB.auth.resetPasswordForEmail(email, {
+    redirectTo: location.origin + location.pathname.replace("kirish.html", "yangi-parol.html")
+  });
+  setLoading(btn, false);
+
+  if (error) return showMsg(error.message, "err");
+  showMsg("Tiklash havolasi emailingizga yuborildi. Pochtangizni tekshiring.", "ok");
+};
+
+// ===== DARK MODE =====
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const isDark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const next = isDark ? "light" : "dark";
+  r.dataset.theme = next;
+  $("theme").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", next); } catch(e) {}
+};
+
+// Mavzuni yuklash
+try {
+  const t = localStorage.getItem("theme");
+  if (t) {
+    document.documentElement.dataset.theme = t;
+    $("theme").textContent = t === "dark" ? "☀️" : "🌙";
+  } else {
+    const isDark = matchMedia("(prefers-color-scheme:dark)").matches;
+    $("theme").textContent = isDark ? "☀️" : "🌙";
+  }
+} catch(e) {}
+
+// ===== AGAR ALLAQACHON KIRGAN BO'LSA — TO'G'RIDAN-TO'G'RI KABINETGA =====
+(async () => {
+  const { data: { session } } = await SB.auth.getSession();
+  if (session) {
+    const params = new URLSearchParams(location.search);
+    const next = params.get("next") || "kabinet.html";
+    location.href = next;
+  }
+})();
+</script>
+</body>
+</html>
