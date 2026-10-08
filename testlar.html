@@ -95,6 +95,23 @@ h1{font-size:1.7rem;font-weight:800;margin:0 0 8px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 const SB = supabase.createClient(
+
+// ===== ADMIN TUGMASI =====
+(async () => {
+  const { data: { session } } = await SB.auth.getSession();
+  if (!session) return;
+  const { data: p } = await SB.from("profiles").select("role").eq("id", session.user.id).maybeSingle();
+  if (p?.role === "admin") {
+    const nav = document.querySelector(".nav-actions");
+    if (nav) {
+      const a = document.createElement("a");
+      a.href = "admin.html";
+      a.className = "btn btn-outline";
+      a.textContent = "⚙️ Admin";
+      nav.insertBefore(a, nav.firstChild);
+    }
+  }
+})();
   "https://mfxsbeajzfmpaswiaqac.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
 );
