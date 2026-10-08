@@ -587,6 +587,23 @@
     { id: 'sat-reading', name: 'SAT Reading', icon: '📝', count: 180 },
   ];
 
+// ===== ADMIN TUGMASI =====
+(async () => {
+  const { data: { session } } = await SB.auth.getSession();
+  if (!session) return;
+  const { data: p } = await SB.from("profiles").select("role").eq("id", session.user.id).maybeSingle();
+  if (p?.role === "admin") {
+    const nav = document.querySelector(".nav-actions");
+    if (nav) {
+      const a = document.createElement("a");
+      a.href = "admin.html";
+      a.className = "btn btn-outline";
+      a.textContent = "⚙️ Admin";
+      nav.insertBefore(a, nav.firstChild);
+    }
+  }
+})();
+
   // ====== FANLAR KARTOCHKALARINI CHIQARISH ======
   function renderSubjects() {
     const grid = document.getElementById('subjectsGrid');
