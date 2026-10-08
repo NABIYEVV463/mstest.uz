@@ -47,7 +47,6 @@
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; border: none; }
 
-  /* HEADER */
   header {
     position: sticky; top: 0; z-index: 100;
     background: rgba(255,255,255,0.85);
@@ -119,7 +118,6 @@
   .btn-lg { padding: 14px 28px; font-size: 16px; }
   .btn-xl { padding: 18px 36px; font-size: 17px; }
 
-  /* HERO */
   .hero {
     max-width: 1200px; margin: 0 auto;
     padding: 80px 24px 100px;
@@ -202,7 +200,6 @@
     display: flex; justify-content: space-between;
   }
 
-  /* STATS */
   .stats {
     background: var(--bg-soft);
     padding: 60px 24px;
@@ -229,7 +226,6 @@
     font-size: 15px; color: var(--text-soft); font-weight: 500;
   }
 
-  /* SECTIONS */
   section { padding: 80px 24px; }
   .container { max-width: 1200px; margin: 0 auto; }
   .section-header {
@@ -245,7 +241,6 @@
     max-width: 600px; margin: 0 auto;
   }
 
-  /* SUBJECTS */
   .subjects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -277,7 +272,6 @@
     font-size: 13px; color: var(--text-soft);
   }
 
-  /* FEATURES */
   .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -309,7 +303,6 @@
     font-size: 15px; color: var(--text-soft);
   }
 
-  /* CTA */
   .cta {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-radius: 28px;
@@ -336,7 +329,6 @@
     transform: translateY(-2px);
   }
 
-  /* FOOTER */
   footer {
     background: var(--bg-soft);
     border-top: 1px solid var(--border);
@@ -378,7 +370,6 @@
     color: var(--text-soft);
   }
 
-  /* RESPONSIVE */
   @media (max-width: 900px) {
     .hero {
       grid-template-columns: 1fr;
@@ -405,7 +396,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <nav class="nav">
     <a href="index.html" class="logo">
@@ -414,7 +404,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="testlar.html">Testlar</a></li>
-      <li><a href="malumot.html">Qo‘llanmalar</a></li>
+      <li><a href="reyting.html">Reyting</a></li>
       <li><a href="faq.html">FAQ</a></li>
       <li><a href="aloqa.html">Aloqa</a></li>
     </ul>
@@ -426,7 +416,6 @@
   </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero">
   <div>
     <div class="hero-badge">✨ Milliy sertifikat · SAT · DTM</div>
@@ -451,7 +440,6 @@
   </div>
 </section>
 
-<!-- STATS -->
 <div class="stats">
   <div class="stats-inner">
     <div class="stat">
@@ -473,20 +461,16 @@
   </div>
 </div>
 
-<!-- FANLAR -->
 <section id="fanlar">
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Fanlar</h2>
       <p class="section-subtitle">O‘zingizga kerakli fanni tanlang va test yechishni boshlang</p>
     </div>
-    <div class="subjects-grid" id="subjectsGrid">
-      <!-- JS orqali to'ldiriladi -->
-    </div>
+    <div class="subjects-grid" id="subjectsGrid"></div>
   </div>
 </section>
 
-<!-- NEGA BIZ -->
 <section style="background: var(--bg-soft);">
   <div class="container">
     <div class="section-header">
@@ -528,14 +512,12 @@
   </div>
 </section>
 
-<!-- CTA -->
 <div class="cta">
   <h2>Tayyorlanishingizni bugun boshlang</h2>
   <p>Minglab o‘quvchilar allaqachon MStest bilan imtihonga tayyorlanmoqda. Siz ham qo‘shiling!</p>
   <a href="kirish.html" class="btn btn-lg">Bepul ro‘yxatdan o‘tish →</a>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
@@ -546,7 +528,7 @@
       <h4>Platforma</h4>
       <ul>
         <li><a href="testlar.html">Testlar</a></li>
-        <li><a href="malumot.html">Qo‘llanmalar</a></li>
+        <li><a href="reyting.html">Reyting</a></li>
         <li><a href="kabinet.html">Kabinet</a></li>
       </ul>
     </div>
@@ -572,22 +554,65 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-  // ====== FANLAR MA'LUMOTI (keyin Firebase'dan olinadi) ======
-  const SUBJECTS = [
-    { id: 'matematika', name: 'Matematika', icon: '📐', count: 250 },
-    { id: 'ona-tili', name: 'Ona tili', icon: '📖', count: 180 },
-    { id: 'ingliz-tili', name: 'Ingliz tili', icon: '🇬🇧', count: 320 },
-    { id: 'tarix', name: 'Tarix', icon: '🏛️', count: 150 },
-    { id: 'geografiya', name: 'Geografiya', icon: '🌍', count: 120 },
-    { id: 'kimyo', name: 'Kimyo', icon: '🧪', count: 140 },
-    { id: 'fizika', name: 'Fizika', icon: '⚛️', count: 160 },
-    { id: 'biologiya', name: 'Biologiya', icon: '🧬', count: 130 },
-    { id: 'sat-math', name: 'SAT Math', icon: '📊', count: 200 },
-    { id: 'sat-reading', name: 'SAT Reading', icon: '📝', count: 180 },
-  ];
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
 
-// ===== ADMIN TUGMASI =====
+// ====== FANLAR ======
+async function loadSubjects() {
+  const { data, error } = await SB.from("subjects").select("*").order("id");
+  const grid = document.getElementById("subjectsGrid");
+  if (error || !data) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-soft)">Fanlar yuklanmadi</div>';
+    return;
+  }
+  grid.innerHTML = data.map(s => `
+    <a href="testlar.html?fan=${s.slug}" class="subject-card">
+      <span class="subject-icon">${s.icon || "📚"}</span>
+      <div class="subject-name">${s.name}</div>
+      <div class="subject-count">${s.description || "Testlarni ko‘rish"}</div>
+    </a>
+  `).join("");
+}
+
+// ====== DARK MODE ======
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+function loadTheme() {
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
+}
+
+// ====== STATISTIKA ======
+function animateStats() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = +el.dataset.count;
+    let current = 0;
+    const step = target / 60;
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(timer); }
+      el.textContent = Math.floor(current).toLocaleString('uz');
+    }, 20);
+  });
+}
+const statsObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { animateStats(); statsObserver.disconnect(); }
+  });
+});
+statsObserver.observe(document.querySelector('.stats'));
+
+// ====== ADMIN TUGMASI ======
 (async () => {
   const { data: { session } } = await SB.auth.getSession();
   if (!session) return;
@@ -604,61 +629,9 @@
   }
 })();
 
-  // ====== FANLAR KARTOCHKALARINI CHIQARISH ======
-  function renderSubjects() {
-    const grid = document.getElementById('subjectsGrid');
-    grid.innerHTML = SUBJECTS.map(s => `
-      <a href="testlar.html?fan=${s.id}" class="subject-card">
-        <span class="subject-icon">${s.icon}</span>
-        <div class="subject-name">${s.name}</div>
-        <div class="subject-count">${s.count} ta savol</div>
-      </a>
-    `).join('');
-  }
-
-  // ====== DARK MODE ======
-  function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
-  }
-  function loadTheme() {
-    const saved = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☀️' : '🌙';
-  }
-
-  // ====== STATISTIKA ANIMATSIYASI ======
-  function animateStats() {
-    document.querySelectorAll('[data-count]').forEach(el => {
-      const target = +el.dataset.count;
-      let current = 0;
-      const step = target / 60;
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        el.textContent = Math.floor(current).toLocaleString('uz');
-      }, 20);
-    });
-  }
-  const statsObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        animateStats();
-        statsObserver.disconnect();
-      }
-    });
-  });
-  statsObserver.observe(document.querySelector('.stats'));
-
-  // ====== ISHGA TUSHIRISH ======
-  loadTheme();
-  renderSubjects();
+// ====== ISHGA TUSHIRISH ======
+loadTheme();
+loadSubjects();
 </script>
 
 </body>
