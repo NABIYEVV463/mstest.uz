@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shaxsiy kabinet — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#fff;--line:#d6d3f3;--acc:#5a3df0;--accink:#fff;--c1:#12a36a;--c2:#1b8fd1;--c3:#c98400;--c4:#e0405c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}}
+:root[data-theme="dark"]{--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a;--c1:#5ee0a0;--c2:#5cc8ff;--c3:#ffc857;--c4:#ff7a90}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.5;min-height:100vh}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.3rem;color:var(--acc);text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--acc),#06b6d4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.hbtn{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.hbtn:hover{border-color:var(--acc);color:var(--acc)}
+.hbtn.danger:hover{border-color:var(--c4);color:var(--c4)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:20px}
+.hero{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center}
+.avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800}
+.hello{font-size:.9rem;color:var(--mute)}
+.name{font-size:1.5rem;font-weight:800;margin:2px 0 4px}
+.email{font-size:.9rem;color:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.stat b{display:block;font-size:1.9rem;line-height:1.1;font-weight:800}
+.stat span{color:var(--mute);font-size:.88rem;display:block;margin-top:4px}
+.stat.acc b{color:var(--acc)}
+.stat.c1 b{color:var(--c1)}
+.stat.c2 b{color:var(--c2)}
+.stat.c3 b{color:var(--c3)}
+h2{margin:0 0 16px;font-size:1.2rem;font-weight:800}
+.actions{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){.actions{grid-template-columns:repeat(3,1fr)}}
+.action{display:flex;align-items:center;gap:14px;padding:18px;background:var(--bg);border:1px solid var(--line);border-radius:14px;cursor:pointer;text-decoration:none;color:var(--ink);transition:all .2s}
+.action:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 30px -10px rgba(90,61,240,.3)}
+.action-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--acc),#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.action-title{font-weight:700;font-size:.98rem}
+.action-sub{font-size:.83rem;color:var(--mute)}
+.empty{color:var(--mute);padding:40px 20px;text-align:center;border:2px dashed var(--line);border-radius:14px}
+.empty-icon{font-size:2.5rem;margin-bottom:8px;opacity:.5}
+.res-item{border-top:1px solid var(--line);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.res-item:first-child{border-top:0}
+.res-title{font-weight:700}
+.res-meta{font-size:.85rem;color:var(--mute);margin-top:2px}
+.res-score{font-weight:800;font-size:1.1rem}
+.res-score.ok{color:var(--c1)}
+.res-score.mid{color:var(--c3)}
+.res-score.bad{color:var(--c4)}
+.theme-btn{position:fixed;top:20px;right:20px;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.loading{text-align:center;padding:60px 20px;color:var(--mute)}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+<main>
+  <header>
+    <a href="index.html" class="logo"><div class="logo-icon">📝</div>MStest</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="testlar.html" class="hbtn">📚 Testlar</a>
+      <button class="hbtn danger" id="logout">Chiqish</button>
+    </div>
+  </header>
+
+  <div id="loading" class="loading">Yuklanmoqda...</div>
+
+  <div id="content" style="display:none">
+    <div class="card hero">
+      <div class="avatar" id="avatar">?</div>
+      <div>
+        <div class="hello">Salom, 👋</div>
+        <div class="name" id="uname">Foydalanuvchi</div>
+        <div class="email" id="uemail">—</div>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-bottom:20px">
+      <div class="stat acc"><b id="s-total">0</b><span>Yechilgan testlar</span></div>
+      <div class="stat c1"><b id="s-avg">0%</b><span>O‘rtacha natija</span></div>
+      <div class="stat c2"><b id="s-correct">0</b><span>To‘g‘ri javoblar</span></div>
+      <div class="stat c3"><b id="s-best">0%</b><span>Eng yaxshi natija</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Tezkor harakatlar</h2>
+      <div class="actions">
+        <a href="testlar.html" class="action">
+          <div class="action-icon">🚀</div>
+          <div>
+            <div class="action-title">Testni boshlash</div>
+            <div class="action-sub">Fan tanlab, yechishni boshlang</div>
+          </div>
+        </a>
+        <a href="natijalar.html" class="action">
+          <div class="action-icon">📊</div>
+          <div>
+            <div class="action-title">Natijalarim</div>
+            <div class="action-sub">Barcha natijalarni ko‘ring</div>
+          </div>
+        </a>
+        <a href="malumot.html" class="action">
+          <div class="action-icon">📖</div>
+          <div>
+            <div class="action-title">Qo‘llanmalar</div>
+            <div class="action-sub">Nazariy materiallar</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Oxirgi natijalar</h2>
+      <div id="results">
+        <div class="empty">
+          <div class="empty-icon">📝</div>
+          <div>Hali test yechmagansiz</div>
+          <div style="font-size:.85rem;margin-top:6px">Birinchi testni yechish uchun «Testni boshlash» tugmasini bosing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+const $ = id => document.getElementById(id);
+
+// ===== DARK MODE =====
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const isDark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const next = isDark ? "light" : "dark";
+  r.dataset.theme = next;
+  $("theme").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", next); } catch(e) {}
+};
+try {
+  const t = localStorage.getItem("theme");
+  if (t) { document.documentElement.dataset.theme = t; $("theme").textContent = t === "dark" ? "☀️" : "🌙"; }
+  else if (matchMedia("(prefers-color-scheme:dark)").matches) $("theme").textContent = "☀️";
+} catch(e) {}
+
+// ===== CHIQISH =====
+$("logout").onclick = async () => {
+  if (!confirm("Hisobdan chiqmoqchimisiz?")) return;
+  await SB.auth.signOut();
+  location.href = "index.html";
+};
+
+// ===== YUKLASH =====
+(async () => {
+  const { data: { session } } = await SB.auth.getSession();
+  if (!session) { location.href = "kirish.html"; return; }
+
+  const user = session.user;
+  const email = user.email || "—";
+  const name = user.user_metadata?.full_name || email.split("@")[0];
+
+  $("uname").textContent = name;
+  $("uemail").textContent = email;
+  $("avatar").textContent = name.charAt(0).toUpperCase();
+
+  // Profilni yuklash (ixtiyoriy)
+  const { data: profile } = await SB.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  if (profile?.full_name) {
+    $("uname").textContent = profile.full_name;
+    $("avatar").textContent = profile.full_name.charAt(0).toUpperCase();
+  }
+
+  // Natijalarni yuklash
+  await loadResults(user.id);
+
+  $("loading").style.display = "none";
+  $("content").style.display = "block";
+})();
+
+async function loadResults(userId) {
+  const { data, error } = await SB.from("results")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  const box = $("results");
+
+  if (error || !data || !data.length) {
+    // Natijalar jadvali yo'q bo'lsa ham xato ko'rsatmaymiz
+    return;
+  }
+
+  let total = data.length;
+  let correctSum = 0;
+  let totalSum = 0;
+  let best = 0;
+
+  const html = data.map(r => {
+    const score = r.total > 0 ? Math.round((r.correct / r.total) * 100) : 0;
+    correctSum += r.correct;
+    totalSum += r.total;
+    if (score > best) best = score;
+    const cls = score >= 80 ? "ok" : score >= 50 ? "mid" : "bad";
+    const date = new Date(r.created_at).toLocaleDateString("uz-UZ");
+    return `
+      <div class="res-item">
+        <div>
+          <div class="res-title">${r.test_name || "Test"}</div>
+          <div class="res-meta">${date} · ${r.correct}/${r.total} to‘g‘ri</div>
+        </div>
+        <div class="res-score ${cls}">${score}%</div>
+      </div>
+    `;
+  }).join("");
+
+  box.innerHTML = html;
+
+  const avg = totalSum > 0 ? Math.round((correctSum / totalSum) * 100) : 0;
+  $("s-total").textContent = total;
+  $("s-avg").textContent = avg + "%";
+  $("s-correct").textContent = correctSum;
+  $("s-best").textContent = best + "%";
+}
+</script>
+</body>
+</html>
