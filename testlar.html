@@ -29,7 +29,6 @@ h1{font-size:1.7rem;font-weight:800;margin:0 0 8px}
 .filter{padding:8px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;font:inherit;font-weight:600;font-size:.86rem;cursor:pointer;transition:all .2s}
 .filter:hover{border-color:var(--acc)}
 .filter.on{background:var(--acc);color:var(--accink);border-color:transparent}
-.section-title{font-size:1.15rem;font-weight:800;margin:32px 0 16px}
 .subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .subject{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--ink);display:block;position:relative;overflow:hidden}
 .subject:hover{transform:translateY(-4px);border-color:var(--acc);box-shadow:0 15px 35px -12px rgba(90,61,240,.25)}
@@ -62,6 +61,7 @@ h1{font-size:1.7rem;font-weight:800;margin:0 0 8px}
   <header>
     <a href="index.html" class="logo"><div class="logo-icon">📝</div>MStest</a>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="reyting.html" class="hbtn">🏆 Reyting</a>
       <a href="kabinet.html" class="hbtn">👤 Kabinet</a>
     </div>
   </header>
@@ -84,9 +84,9 @@ h1{font-size:1.7rem;font-weight:800;margin:0 0 8px}
     <h1 id="subjectTitle">Fan</h1>
     <p class="subtitle" id="subjectDesc"></p>
 
-    <<div class="filters" id="levelFilters">
-  <button class="filter on" data-lvl="all">Barchasi</button>
-</div>
+    <div class="filters" id="levelFilters">
+      <button class="filter on" data-lvl="all">Barchasi</button>
+    </div>
 
     <div class="tests" id="testsList"></div>
   </div>
@@ -141,7 +141,7 @@ async function loadSubjects() {
     return;
   }
   allSubjects = data || [];
-  console.log("SUBJECTS:", allSubjects); // DEBUG
+  console.log("SUBJECTS:", allSubjects);
   renderSubjects();
 }
 
@@ -165,13 +165,12 @@ function renderSubjects(filter = "") {
     </a>
   `).join("");
 
-  // Har bir kartochkaga click — to'g'ridan-to'g'ri ID bo'yicha topamiz
   grid.querySelectorAll(".subject").forEach(a => {
     a.onclick = (e) => {
       e.preventDefault();
       const id = a.dataset.id;
       const subj = allSubjects.find(x => String(x.id) === String(id));
-      console.log("CLICKED SUBJECT:", subj); // DEBUG
+      console.log("CLICKED:", subj);
       if (subj) openSubject(subj);
     };
   });
@@ -183,7 +182,7 @@ function openSubject(subj) {
   currentLevel = "all";
   currentLevels = Array.isArray(subj.levels) ? subj.levels : [];
   
-  console.log("LEVELS:", currentLevels); // DEBUG
+  console.log("LEVELS:", currentLevels);
 
   $("view-subjects").style.display = "none";
   $("view-tests").style.display = "block";
@@ -277,3 +276,5 @@ function escapeHtml(s) {
   }
 })();
 </script>
+</body>
+</html>
