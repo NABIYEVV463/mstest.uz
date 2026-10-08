@@ -102,6 +102,21 @@ const $ = id => document.getElementById(id);
 let allSubjects = [];
 let currentLevel = "all";
 let currentSubject = null;
+let currentLevels = [];
+
+// ===== DARAJA NOMLARI =====
+const LEVEL_NAMES = {
+  boshlangich: "Boshlang‘ich",
+  orta: "O‘rta",
+  ms: "MS",
+  sat: "SAT",
+  ielts: "IELTS",
+  toefl: "TOEFL",
+  cefr: "CEFR",
+  torfl: "TORFL",
+  oson: "Oson",
+  qiyin: "Qiyin"
+};
 
 // ===== DARK MODE =====
 $("theme").onclick = () => {
@@ -126,9 +141,11 @@ async function loadSubjects() {
     return;
   }
   allSubjects = data || [];
+  console.log("SUBJECTS:", allSubjects); // DEBUG
   renderSubjects();
 }
 
+// ===== FANLARNI KO'RSATISH =====
 function renderSubjects(filter = "") {
   const f = filter.toLowerCase().trim();
   const list = allSubjects.filter(s => 
@@ -140,7 +157,7 @@ function renderSubjects(filter = "") {
     return;
   }
   grid.innerHTML = list.map(s => `
-    <a href="#" class="subject" data-id="${s.id}" data-name="${escapeHtml(s.name)}" data-desc="${escapeHtml(s.description||'')}">
+    <a href="#" class="subject" data-id="${s.id}">
       <span class="subject-icon">${s.icon || "📚"}</span>
       <div class="subject-name">${escapeHtml(s.name)}</div>
       <div class="subject-desc">${escapeHtml(s.description || "")}</div>
@@ -148,26 +165,57 @@ function renderSubjects(filter = "") {
     </a>
   `).join("");
 
+  // Har bir kartochkaga click — to'g'ridan-to'g'ri ID bo'yicha topamiz
   grid.querySelectorAll(".subject").forEach(a => {
     a.onclick = (e) => {
       e.preventDefault();
-      openSubject(a.dataset.id, a.dataset.name, a.dataset.desc);
+      const id = a.dataset.id;
+      const subj = allSubjects.find(x => String(x.id) === String(id));
+      console.log("CLICKED SUBJECT:", subj); // DEBUG
+      if (subj) openSubject(subj);
     };
   });
 }
 
-// ===== FAN OCHISH =====
-async function openSubject(id, name, desc) {
-  currentSubject = id;
+// ===== FANNI OCHISH =====
+function openSubject(subj) {
+  currentSubject = subj.id;
   currentLevel = "all";
+  currentLevels = Array.isArray(subj.levels) ? subj.levels : [];
+  
+  console.log("LEVELS:", currentLevels); // DEBUG
+
   $("view-subjects").style.display = "none";
   $("view-tests").style.display = "block";
-  $("subjectTitle").textContent = name;
-  $("subjectDesc").textContent = desc || "";
-  document.querySelectorAll("#levelFilters .filter").forEach(f => f.classList.toggle("on", f.dataset.lvl === "all"));
-  await loadTests();
+  $("subjectTitle").textContent = subj.name;
+  $("subjectDesc").textContent = subj.description || "";
+
+  renderLevelFilters();
+  loadTests();
 }
 
+// ===== DARAJA FILTRLARINI CHIQARISH =====
+function renderLevelFilters() {
+  const box = $("levelFilters");
+  let html = `<button class="filter on" data-lvl="all">Barchasi</button>`;
+  
+  currentLevels.forEach(lvl => {
+    const label = LEVEL_NAMES[lvl] || lvl;
+    html += `<button class="filter" data-lvl="${lvl}">${label}</button>`;
+  });
+  
+  box.innerHTML = html;
+  
+  box.querySelectorAll(".filter").forEach(b => {
+    b.onclick = () => {
+      box.querySelectorAll(".filter").forEach(x => x.classList.toggle("on", x === b));
+      currentLevel = b.dataset.lvl;
+      loadTests();
+    };
+  });
+}
+
+// ===== ORQAGA =====
 $("backBtn").onclick = () => {
   $("view-tests").style.display = "none";
   $("view-subjects").style.display = "block";
@@ -189,22 +237,25 @@ async function loadTests() {
     return;
   }
   if (!data || !data.length) {
-    box.innerHTML = `<div class="empty"><div class="empty-icon">📝</div><div>Bu fan bo‘yicha testlar hali qo‘shilmagan</div><div style="font-size:.85rem;margin-top:6px">Tez orada qo‘shiladi</div></div>`;
+    box.innerHTML = `<div class="empty"><div class="empty-icon">📝</div><div>Bu bo‘limda testlar hali qo‘shilmagan</div><div style="font-size:.85rem;margin-top:6px">Tez orada qo‘shiladi</div></div>`;
     return;
   }
-  box.innerHTML = data.map(t => `
-    <a href="test.html?id=${t.id}" class="test">
-      <div>
-        <div class="test-name">${escapeHtml(t.name)}</div>
-        <div class="test-meta">
-          <span class="test-diff diff-${escapeHtml(t.difficulty||'Oʻrtacha')}">${escapeHtml(t.difficulty||'Oʻrtacha')}</span>
-          <span>⏱️ ${t.duration} daqiqa</span>
-          <span>📝 ${t.question_count} savol</span>
+  box.innerHTML = data.map(t => {
+    const lvlLabel = LEVEL_NAMES[t.level] || t.level || "";
+    return `
+      <a href="test.html?id=${t.id}" class="test">
+        <div>
+          <div class="test-name">${escapeHtml(t.name)}</div>
+          <div class="test-meta">
+            ${lvlLabel ? `<span class="test-diff diff-${escapeHtml(t.difficulty||'Oʻrtacha')}">${escapeHtml(lvlLabel)}</span>` : ""}
+            <span>⏱️ ${t.duration} daqiqa</span>
+            <span>📝 ${t.question_count} savol</span>
+          </div>
         </div>
-      </div>
-      <div class="test-go">Boshlash →</div>
-    </a>
-  `).join("");
+        <div class="test-go">Boshlash →</div>
+      </a>
+    `;
+  }).join("");
 }
 
 // ===== QIDIRUV =====
@@ -215,16 +266,14 @@ function escapeHtml(s) {
   return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// ===== URL parametridan fan =====
+// ===== ISHGA TUSHIRISH =====
 (async () => {
   await loadSubjects();
   const params = new URLSearchParams(location.search);
   const fanSlug = params.get("fan");
   if (fanSlug) {
     const s = allSubjects.find(x => x.slug === fanSlug);
-    if (s) openSubject(s.id, s.name, s.description || "");
+    if (s) openSubject(s);
   }
 })();
 </script>
-</body>
-</html>
