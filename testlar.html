@@ -211,15 +211,6 @@ async function loadTests() {
   `).join("");
 }
 
-// ===== FILTRLAR =====
-$("levelFilters").onclick = (e) => {
-  const b = e.target.closest(".filter");
-  if (!b) return;
-  document.querySelectorAll("#levelFilters .filter").forEach(f => f.classList.toggle("on", f === b));
-  currentLevel = b.dataset.lvl;
-  loadTests();
-};
-
 // ===== QIDIRUV =====
 $("searchS").oninput = (e) => renderSubjects(e.target.value);
 
