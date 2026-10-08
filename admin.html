@@ -484,4 +484,182 @@ $("save").onclick = async () => {
 
 function clearForm() {
   ["topic","qt","exp","o0","o1","o2","o3"].forEach(i => $(i).value = "");
-  document.querySelector("input[name=ok]").checked = tru
+  document.querySelector("input[name=ok]").checked = true;
+}
+$("clear").onclick = () => { clearForm(); msg(""); };
+
+// ====== CSV ======
+function parseCSV(t) {
+  const R = []; let r = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) {
+      if (c === '"') { if (t[i+1] === '"') { f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { r.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && t[i+1] === "\n") i++;
+      r.push(f); f = "";
+      if (r.some(x => x.trim())) R.push(r);
+      r = [];
+    } else f += c;
+  }
+  r.push(f);
+  if (r.some(x => x.trim())) R.push(r);
+  return R;
+}
+
+$("imp").onclick = async () => {
+  const subjId = $("subj").value;
+  const testId = $("test").value;
+  if (!subjId || !testId) return msg("Avval fan va testni tanlang.", 1);
+
+  const R = parseCSV($("csv").value);
+  if (!R.length) return msg("CSV boʻsh.", 1);
+  if ((R[0][0] || "").toLowerCase().includes("daraja")) R.shift();
+
+  const rows = []; let bad = 0;
+  R.forEach(r => {
+    const lvlKey = (r[0] || "").trim().toLowerCase();
+    const lvlMatch = Object.keys(LV_NAMES).find(k => k === lvlKey) ||
+                     Object.entries(LV_NAMES).find(([k,v]) => v.toLowerCase() === lvlKey)?.[0];
+    const a = AB.indexOf((r[7] || "").trim().toUpperCase());
+    if (!lvlMatch || !(r[2] || "").trim() || [3,4,5,6].some(k => !(r[k] || "").trim()) || a < 0) { bad++; return; }
+    rows.push({
+      subject_id: subjId, test_id: testId,
+      level: lvlMatch,
+      topic: (r[1] || "").trim() || null,
+      body: r[2].trim(),
+      options: [3,4,5,6].map(k => r[k].trim()),
+      correct_index: a,
+      explanation: (r[8] || "").trim() || null,
+      source: (r[9] || "").trim() || "Boshqa",
+      difficulty: (r[10] || "").trim() || "Oʻrtacha"
+    });
+  });
+
+  if (!rows.length) return msg("Yaroqli qator topilmadi.", 1);
+  const { error } = await SB.from("questions").insert(rows);
+  if (error) return msg("Xato: " + error.message, 1);
+  loadQ();
+  msg(rows.length + " ta savol qoʻshildi" + (bad ? ", " + bad + " ta qator xato." : "."));
+};
+
+$("file").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { $("csv").value = r.result; msg("Fayl oʻqildi. «Yuklash» ni bosing."); };
+  r.readAsText(f);
+};
+
+$("exp2").onclick = () => {
+  const e = v => '"' + String(v).replace(/"/g, '""') + '"';
+  $("csv").value = "daraja,mavzu,savol,A,B,C,D,toʻgʻri,izoh,manba,qiyinlik\n" +
+    Q.map(x => [LV_NAMES[x.level] || x.level, x.topic, x.body, ...(x.options||[]), AB[x.correct_index], x.explanation, x.source, x.difficulty].map(e).join(",")).join("\n");
+};
+
+// ====== FOYDALANUVCHILAR ======
+async function loadU() {
+  const { data, error } = await SB.from("profiles").select("full_name,email,created_at").order("created_at", { ascending: false }).limit(5000);
+  if (error) return;
+  U = (data || []).map(r => ({ name: r.full_name || "Ismsiz", email: r.email || "—", d: new Date(r.created_at) }));
+  stats(); chart(); ulist();
+}
+
+const now = new Date(), DAY = 864e5, p2 = n => String(n).padStart(2, "0");
+const fd = d => p2(d.getDate()) + "." + p2(d.getMonth() + 1) + "." + d.getFullYear();
+const kd = d => d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+const km = d => d.getFullYear() + "-" + d.getMonth();
+const ky = d => d.getFullYear();
+
+function stats() {
+  const c = (f, k) => U.filter(u => f(u.d) === k).length;
+  const v = [
+    [c(kd, kd(now)), "Bugun qoʻshildi"],
+    [c(km, km(now)), "Shu oy"],
+    [c(ky, ky(now)), "Shu yil"],
+    [U.length, "Jami"]
+  ];
+  $("stats").innerHTML = "";
+  v.forEach(x => {
+    const d = document.createElement("div");
+    d.className = "stat";
+    d.innerHTML = "<b>" + x[0] + "</b><span>" + x[1] + "</span>";
+    $("stats").appendChild(d);
+  });
+}
+
+let mode = "d";
+function chart() {
+  const B = [];
+  if (mode === "d") for (let i = 13; i >= 0; i--) { const d = new Date(now - i*DAY); B.push([p2(d.getDate())+"."+p2(d.getMonth()+1), U.filter(u => kd(u.d) === kd(d)).length]); }
+  else if (mode === "m") for (let i = 11; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth()-i, 1); B.push([p2(d.getMonth()+1)+"."+String(d.getFullYear()).slice(2), U.filter(u => km(u.d) === km(d)).length]); }
+  else { const y0 = U.length ? Math.min(...U.map(u => u.d.getFullYear())) : now.getFullYear(); for (let y = y0; y <= now.getFullYear(); y++) B.push([String(y), U.filter(u => ky(u.d) === y).length]); }
+
+  const mx = Math.max(1, ...B.map(b => b[1]));
+  $("chart").innerHTML = "";
+  B.forEach(b => {
+    const e = document.createElement("div");
+    e.className = "bar";
+    e.innerHTML = "<em>" + b[1] + "</em><i style=\"height:" + Math.round(b[1]/mx*130) + "px\"></i><span>" + b[0] + "</span>";
+    $("chart").appendChild(e);
+  });
+}
+
+function ulist() {
+  const s = ($("usr").value || "").toLowerCase();
+  const r = U.filter(u => (u.name + " " + u.email).toLowerCase().includes(s));
+  $("ucnt").textContent = "(" + r.length + ")";
+  const L = $("ulist");
+  L.innerHTML = "";
+  if (!r.length) { L.innerHTML = '<div class="empty">Topilmadi.</div>'; return; }
+  r.forEach(u => {
+    const d = document.createElement("div");
+    d.className = "urow";
+    const a = document.createElement("div"), b = document.createElement("small");
+    a.textContent = u.name;
+    b.textContent = u.email + " · " + fd(u.d);
+    d.append(a, document.createElement("span"), b);
+    L.appendChild(d);
+  });
+}
+
+$("seg").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  mode = b.dataset.m;
+  [...$("seg").children].forEach(x => x.classList.toggle("on", x === b));
+  chart();
+};
+$("usr").oninput = ulist;
+
+// ====== TABLAR ======
+document.querySelector(".tabs").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...document.querySelectorAll(".tab")].forEach(x => x.classList.toggle("on", x === b));
+  $("tab-q").hidden = b.dataset.t !== "q";
+  $("tab-t").hidden = b.dataset.t !== "t";
+  $("tab-u").hidden = b.dataset.t !== "u";
+};
+
+// ====== THEME ======
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const d = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const t = d ? "light" : "dark";
+  r.dataset.theme = t;
+  try { localStorage.setItem("theme", t); } catch(e) {}
+};
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch(e) {}
+
+// ====== YORDAMCHI ======
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ====== ISHGA TUSHIRISH ======
+init();
+</script>
+</body>
+</html>
+```
