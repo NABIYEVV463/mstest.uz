@@ -208,7 +208,8 @@ body {
 
 .theme-btn {
   position: fixed;
-  top: 20px;
+  top: auto;
+  bottom: 20px;
   right: 20px;
   width: 48px;
   height: 48px;
@@ -221,7 +222,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 900;
   box-shadow: var(--shadow-md);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, background 0.3s;
   backdrop-filter: blur(10px);
