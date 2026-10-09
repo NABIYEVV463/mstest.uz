@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reyting — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#fff;--line:#d6d3f3;--acc:#5a3df0;--accink:#fff;--gold:#f5b400;--silver:#a8b0c0;--bronze:#c98c4a;--c1:#12a36a;--c4:#e0405c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a}}
+:root[data-theme="dark"]{--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.5;min-height:100vh}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.3rem;color:var(--acc);text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--acc),#06b6d4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.hbtn{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.hbtn:hover{border-color:var(--acc);color:var(--acc)}
+.hbtn.primary{background:var(--acc);color:var(--accink);border-color:transparent}
+.hbtn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(90,61,240,.5)}
+h1{font-size:1.7rem;font-weight:800;margin:0 0 6px}
+.subtitle{color:var(--mute);font-size:1rem;margin:0 0 24px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter{padding:8px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;font:inherit;font-weight:600;font-size:.86rem;cursor:pointer;transition:all .2s}
+.filter:hover{border-color:var(--acc)}
+.filter.on{background:var(--acc);color:var(--accink);border-color:transparent}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px}
+@media(max-width:640px){.podium{grid-template-columns:1fr}}
+.pod{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 16px;text-align:center;position:relative;transition:all .3s}
+.pod:hover{transform:translateY(-4px);box-shadow:0 15px 35px -12px rgba(90,61,240,.25)}
+.pod.first{border-color:var(--gold);background:linear-gradient(180deg,rgba(245,180,0,.08),var(--card));order:2;transform:scale(1.05)}
+.pod.first:hover{transform:scale(1.05) translateY(-4px)}
+.pod.second{border-color:var(--silver);order:1}
+.pod.third{border-color:var(--bronze);order:3}
+.medal{font-size:2.4rem;margin-bottom:8px;display:block}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;margin:0 auto 12px}
+.pod-name{font-weight:800;font-size:1.05rem;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pod-score{font-size:1.6rem;font-weight:800;color:var(--acc);line-height:1}
+.pod-label{font-size:.8rem;color:var(--mute);margin-top:2px}
+.pod-meta{font-size:.8rem;color:var(--mute);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.table{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.row{display:grid;grid-template-columns:50px 1fr 80px 90px 90px;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center;transition:background .2s}
+.row:last-child{border-bottom:0}
+.row.head{background:var(--bg);font-size:.82rem;color:var(--mute);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.row:not(.head):hover{background:var(--bg)}
+.row.me{background:rgba(90,61,240,.08);border-left:3px solid var(--acc)}
+.rank{font-weight:800;font-size:1.1rem;color:var(--mute)}
+.rank.top{color:var(--acc)}
+.uname{font-weight:700;display:flex;align-items:center;gap:10px;min-width:0}
+.uname span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uavatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
+.num{font-weight:700;text-align:right}
+.num.acc{color:var(--acc)}
+.num.mute{color:var(--mute);font-weight:600}
+@media(max-width:640px){
+  .row{grid-template-columns:36px 1fr 70px;padding:12px 14px}
+  .row .col-tests,.row .col-avg{display:none}
+  .row.head .col-tests,.row.head .col-avg{display:none}
+}
+.empty{color:var(--mute);text-align:center;padding:60px 20px;background:var(--card);border:2px dashed var(--line);border-radius:14px}
+.empty-icon{font-size:3rem;margin-bottom:10px;opacity:.5}
+.loading{text-align:center;padding:60px;color:var(--mute)}
+.my-card{background:linear-gradient(135deg,var(--acc),#06b6d4);color:#fff;border-radius:18px;padding:20px 24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.my-card .num-big{font-size:1.8rem;font-weight:800;line-height:1}
+.my-card .lbl{font-size:.88rem;opacity:.9}
+.theme-btn{position:fixed;top:20px;right:20px;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+<main>
+  <header>
+    <a href="index.html" class="logo"><div class="logo-icon">📝</div>MStest</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="testlar.html" class="hbtn">📚 Testlar</a>
+      <a href="kabinet.html" class="hbtn">👤 Kabinet</a>
+    </div>
+  </header>
+
+  <h1>🏆 Reyting</h1>
+  <p class="subtitle">Eng faol va eng yaxshi foydalanuvchilar</p>
+
+  <div class="filters">
+    <button class="filter on" data-period="all">Barcha vaqt</button>
+    <button class="filter" data-period="month">Bu oy</button>
+    <button class="filter" data-period="week">Bu hafta</button>
+    <button class="filter" data-period="day">Bugun</button>
+  </div>
+
+  <div id="myCard" style="display:none"></div>
+  <div id="podium"></div>
+  <div id="leaderboard">
+    <div class="loading">Yuklanmoqda...</div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+const $ = id => document.getElementById(id);
+let period = "all";
+let currentUserId = null;
+
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const isDark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const next = isDark ? "light" : "dark";
+  r.dataset.theme = next;
+  $("theme").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", next); } catch(e) {}
+};
+try {
+  const t = localStorage.getItem("theme");
+  if (t) { document.documentElement.dataset.theme = t; $("theme").textContent = t === "dark" ? "☀️" : "🌙"; }
+  else if (matchMedia("(prefers-color-scheme:dark)").matches) $("theme").textContent = "☀️";
+} catch(e) {}
+
+function getDateFrom(period) {
+  const now = new Date();
+  if (period === "day") return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (period === "week") { const d = new Date(now); d.setDate(d.getDate() - 7); return d; }
+  if (period === "month") { const d = new Date(now); d.setMonth(d.getMonth() - 1); return d; }
+  return null;
+}
+
+async function loadLeaderboard() {
+  const box = $("leaderboard");
+  box.innerHTML = `<div class="loading">Yuklanmoqda...</div>`;
+  $("podium").innerHTML = "";
+
+  const { data: { session } } = await SB.auth.getSession();
+  currentUserId = session?.user?.id || null;
+
+  let q = SB.from("results").select("user_id, correct, total, created_at, profiles(full_name, email)");
+  const from = getDateFrom(period);
+  if (from) q = q.gte("created_at", from.toISOString());
+
+  const { data, error } = await q;
+  if (error) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Xato: ${error.message}</div></div>`;
+    return;
+  }
+
+  if (!data || !data.length) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">🏆</div><div>Hali reyting bo‘sh</div><div style="font-size:.85rem;margin-top:6px">Birinchi bo‘lib test yeching va reytingga chiqing!</div></div>`;
+    return;
+  }
+
+  const map = new Map();
+  data.forEach(r => {
+    const uid = r.user_id;
+    if (!map.has(uid)) {
+      const name = r.profiles?.full_name || r.profiles?.email?.split("@")[0] || "Foydalanuvchi";
+      map.set(uid, { id: uid, name, tests: 0, correct: 0, total: 0 });
+    }
+    const u = map.get(uid);
+    u.tests += 1;
+    u.correct += r.correct || 0;
+    u.total += r.total || 0;
+  });
+
+  const list = [...map.values()].map(u => ({
+    ...u,
+    score: u.total > 0 ? Math.round((u.correct / u.total) * 100) : 0
+  }));
+
+  list.sort((a, b) => b.score - a.score || b.tests - a.tests);
+
+  const myIndex = list.findIndex(u => u.id === currentUserId);
+  if (myIndex >= 0 && currentUserId) {
+    const me = list[myIndex];
+    $("myCard").style.display = "block";
+    $("myCard").className = "my-card";
+    $("myCard").innerHTML = `
+      <div>
+        <div class="lbl">Sizning o‘rningiz</div>
+        <div class="num-big">#${myIndex + 1}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="lbl">O‘rtacha ball</div>
+        <div class="num-big">${me.score}%</div>
+      </div>
+    `;
+  } else {
+    $("myCard").style.display = "none";
+  }
+
+  const top3 = list.slice(0, 3);
+  const medals = ["🥇", "🥈", "🥉"];
+  const cls = ["first", "second", "third"];
+  $("podium").innerHTML = top3.map((u, i) => `
+    <div class="pod ${cls[i]}">
+      <span class="medal">${medals[i]}</span>
+      <div class="avatar">${escapeHtml(u.name.charAt(0).toUpperCase())}</div>
+      <div class="pod-name">${escapeHtml(u.name)}</div>
+      <div class="pod-score">${u.score}%</div>
+      <div class="pod-label">o‘rtacha ball</div>
+      <div class="pod-meta">${u.tests} ta test · ${u.correct}/${u.total}</div>
+    </div>
+  `).join("");
+
+  const rest = list.slice(3);
+  if (!rest.length) {
+    $("leaderboard").innerHTML = "";
+    return;
+  }
+
+  const rows = rest.map((u, i) => {
+    const rank = i + 4;
+    const isMe = u.id === currentUserId;
+    return `
+      <div class="row ${isMe ? "me" : ""}">
+        <div class="rank">${rank}</div>
+        <div class="uname">
+          <div class="uavatar">${escapeHtml(u.name.charAt(0).toUpperCase())}</div>
+          <span>${escapeHtml(u.name)}${isMe ? " (siz)" : ""}</span>
+        </div>
+        <div class="num mute col-tests">${u.tests}</div>
+        <div class="num col-avg">${u.correct}/${u.total}</div>
+        <div class="num acc">${u.score}%</div>
+      </div>
+    `;
+  }).join("");
+
+  $("leaderboard").innerHTML = `
+    <div class="table">
+      <div class="row head">
+        <div>#</div>
+        <div>Foydalanuvchi</div>
+        <div class="num col-tests">Testlar</div>
+        <div class="num col-avg">To‘g‘ri</div>
+        <div class="num">Ball</div>
+      </div>
+      ${rows}
+    </div>
+  `;
+}
+
+document.querySelectorAll(".filter").forEach(f => {
+  f.onclick = () => {
+    document.querySelectorAll(".filter").forEach(x => x.classList.toggle("on", x === f));
+    period = f.dataset.period;
+    loadLeaderboard();
+  };
+});
+
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+loadLeaderboard();
+</script>
+</body>
+</html>
