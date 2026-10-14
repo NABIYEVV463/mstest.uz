@@ -482,7 +482,7 @@ footer.site-footer {
   </div>
   <div class="hero-visual fade-in delay-2">
     <div class="hero-card">
-      <div class="hero-card-title">Hozirgi test</div>
+      <div class="hero-card-title">Test ko‘rinishi (namuna)</div>
       <div class="hero-card-subject">📐 Matematika — O‘rta</div>
       <div class="progress-bar"><div class="progress-fill"></div></div>
       <div class="progress-text"><span>15 / 20 savol</span><span>75%</span></div>
@@ -498,20 +498,20 @@ footer.site-footer {
 <section class="stats-section">
   <div class="stats-inner">
     <div class="stat-box fade-in delay-1">
-      <div class="stat-number" data-count="5000">0</div>
-      <div class="stat-label">Faol foydalanuvchi</div>
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Foydalanuvchilar</div>
     </div>
     <div class="stat-box fade-in delay-2">
-      <div class="stat-number" data-count="1200">0</div>
-      <div class="stat-label">Savollar bazasi</div>
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Savollar</div>
     </div>
     <div class="stat-box fade-in delay-3">
-      <div class="stat-number" data-count="10">0</div>
+      <div class="stat-number" data-count="0">0</div>
       <div class="stat-label">Fanlar</div>
     </div>
     <div class="stat-box fade-in delay-4">
-      <div class="stat-number" data-count="98">0</div>
-      <div class="stat-label">Mamnun foydalanuvchi %</div>
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Yechilgan testlar</div>
     </div>
   </div>
 </section>
@@ -571,7 +571,7 @@ footer.site-footer {
 <section class="cta-section">
   <div class="cta reveal">
     <h2>Tayyorlanishingizni bugun boshlang</h2>
-    <p>Minglab o‘quvchilar allaqachon MStest bilan imtihonga tayyorlanmoqda. Siz ham qo‘shiling!</p>
+    <p>Ro‘yxatdan o‘ting va birinchi testingizni bugunoq yeching.</p>
     <a href="kirish.html" class="btn3d large">Bepul ro‘yxatdan o‘tish →</a>
   </div>
 </section>
@@ -609,7 +609,7 @@ footer.site-footer {
     </div>
   </div>
   <div class="footer-bottom">
-    © 2025 MStest.uz — Barcha huquqlar himoyalangan.
+    © 2026 MStest.uz — Barcha huquqlar himoyalangan.
   </div>
 </footer>
 
@@ -658,5 +658,5 @@ $("theme").onclick = () => {
 
 // ===== FANLAR =====
 async function loadSubjects() {
-  const { data, error } = await SB.from("subjects").select("*").order("id");
-  const gr
+  const grid = $("subjectsGrid");
+  const note = t => `<div style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padd
