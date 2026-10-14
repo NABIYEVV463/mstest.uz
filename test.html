@@ -101,6 +101,8 @@ let timerId = null;
 let timeLeft = 0;
 let finished = false;
 let userId = null;
+let locked = false;
+let submitting = false;
 
 // ====== DARK MODE ======
 $("theme").onclick = () => {
@@ -136,40 +138,49 @@ $("quit").onclick = () => {
 };
 
 // ====== YUKLASH ======
+let R = {};
+let isPractice = false;
 (async () => {
   const params = new URLSearchParams(location.search);
   const testId = params.get("id");
-  if (!testId) return showEmpty("Test ID topilmadi.");
+  isPractice = params.get("mode") === "mistakes";
+  if (!testId && !isPractice) return showEmpty("Test ID topilmadi.");
 
   const { data: { session } } = await SB.auth.getSession();
   userId = session?.user?.id || null;
+  if (!userId) {
+    return showEmpty("Testni yechish uchun tizimga kiring.", "kirish.html", "Kirish");
+  }
 
-  // Test
-  const { data: t, error: te } = await SB.from("tests").select("*").eq("id", testId).maybeSingle();
-  if (te || !t) return showEmpty("Test topilmadi.");
-  test = t;
+  if (isPractice) {
+    const { data, error } = await SB.rpc("my_mistakes");
+    if (error) return showEmpty("Xato: " + error.message);
+    if (!data || !data.length) return showEmpty("Hozircha xatolaringiz yo‘q. Barakalla!");
+    test = { id: null, name: "Xatolar ustida ishlash" };
+    questions = data;
+    timeLeft = questions.length * 60;
+  } else {
+    const { data: t, error: te } = await SB.from("tests").select("*").eq("id", testId).maybeSingle();
+    if (te || !t) return showEmpty("Test topilmadi.");
+    test = t;
+    const { data: qs, error: qe } = await SB.from("questions_public").select("id,topic,body,options").eq("test_id", testId).order("id");
+    if (qe) return showEmpty("Xato: " + qe.message);
+    if (!qs || !qs.length) return showEmpty("Bu testda hali savollar yo‘q.");
+    questions = qs;
+    timeLeft = (test.duration || 30) * 60;
+  }
 
-  // Savollar
-  const { data: qs, error: qe } = await SB.from("questions").select("*").eq("test_id", testId).order("id");
-  if (qe) return showEmpty("Xato: " + qe.message);
-  if (!qs || !qs.length) return showEmpty("Bu testda hali savollar yo‘q.");
-
-  questions = qs;
   answers = new Array(questions.length).fill(null);
-
-  // Timer
-  timeLeft = (test.duration || 30) * 60;
-
   startTest();
 })();
 
-function showEmpty(text) {
+function showEmpty(text, href, label) {
   app.innerHTML = `
     <div class="empty">
       <div style="font-size:3rem;margin-bottom:10px">📝</div>
       <div>${escapeHtml(text)}</div>
       <div style="margin-top:20px">
-        <a href="testlar.html" class="btn primary">← Testlarga qaytish</a>
+        <a href="${href || "testlar.html"}" class="btn primary">${label || "← Testlarga qaytish"}</a>
       </div>
     </div>
   `;
@@ -226,83 +237,53 @@ function renderQuestion() {
       </div>
     </div>
 
-    <div class="btns">
-      <button class="btn ghost" id="prev" ${current === 0 ? "disabled" : ""}>← Orqaga</button>
-      ${current === total - 1
-        ? `<button class="btn primary" id="finish">Yakunlash ✓</button>`
-        : `<button class="btn primary" id="next">Keyingi →</button>`
-      }
-    </div>
   `;
 
   updateTimer();
 
-  // Variant tanlash
+  // Variant tanlash: javob berilgach o'zi keyingisiga o'tadi
   document.querySelectorAll(".option").forEach(el => {
     el.onclick = () => {
-      const i = +el.dataset.i;
-      answers[current] = i;
+      if (locked) return;
+      locked = true;
+      answers[current] = +el.dataset.i;
       document.querySelectorAll(".option").forEach(x => x.classList.remove("on"));
       el.classList.add("on");
+      const at = current;
+      setTimeout(() => {
+        locked = false;
+        if (finished || at !== current) return;
+        if (current < total - 1) { current++; renderQuestion(); }
+        else finishTest(false);
+      }, 350);
     };
   });
-
-  // Oldingi
-  const prevBtn = $("prev");
-  if (prevBtn) prevBtn.onclick = () => {
-    if (current > 0) { current--; renderQuestion(); }
-  };
-
-  // Keyingi
-  const nextBtn = $("next");
-  if (nextBtn) nextBtn.onclick = () => {
-    if (answers[current] === null) {
-      if (!confirm("Javob tanlamadingiz. Davom etilsinmi?")) return;
-    }
-    if (current < total - 1) { current++; renderQuestion(); }
-  };
-
-  // Yakunlash
-  const finishBtn = $("finish");
-  if (finishBtn) finishBtn.onclick = () => {
-    const answered = answers.filter(a => a !== null).length;
-    if (answered < questions.length) {
-      if (!confirm(`Siz ${questions.length} tadan ${answered} tasiga javob berdingiz. Yakunlaysizmi?`)) return;
-    } else {
-      if (!confirm("Testni yakunlaysizmi?")) return;
-    }
-    finishTest(false);
-  };
 }
 
 // ====== YAKUNLASH ======
 async function finishTest(byTimeout) {
-  if (finished) return;
-  finished = true;
+  if (finished || submitting) return;
+  submitting = true;
   if (timerId) clearInterval(timerId);
+  app.innerHTML = '<div class="empty"><div>Natija hisoblanmoqda...</div></div>';
 
-  let correct = 0;
-  questions.forEach((q, i) => {
-    if (answers[i] === q.correct_index) correct++;
-  });
-  const total = questions.length;
-  const percent = Math.round((correct / total) * 100);
+  const payload = questions.map((q, i) => ({ question_id: q.id, chosen_index: answers[i] }));
+  const { data, error } = isPractice
+    ? await SB.rpc("submit_practice", { p_answers: payload })
+    : await SB.rpc("submit_result", { p_test_id: String(test.id), p_answers: payload });
 
-  // Saqlash
-  if (userId) {
-    try {
-      await SB.from("results").insert({
-        user_id: userId,
-        test_id: test.id,
-        test_name: test.name,
-        correct: correct,
-        total: total,
-        answers: answers
-      });
-    } catch(e) { console.error(e); }
+  submitting = false;
+  if (error) {
+    app.innerHTML = `<div class="empty"><div>Xato: ${escapeHtml(error.message)}</div>
+      <div style="margin-top:20px"><button class="btn primary" id="retry">Qayta urinish</button></div></div>`;
+    $("retry").onclick = () => finishTest(byTimeout);
+    return;
   }
 
-  renderResult(correct, total, percent, byTimeout);
+  finished = true;
+  R = {};
+  (data.results || []).forEach(r => { R[r.question_id] = r; });
+  renderResult(data.correct, data.total, data.percent, byTimeout);
 }
 
 function renderResult(correct, total, percent, byTimeout) {
@@ -348,9 +329,10 @@ function renderResult(correct, total, percent, byTimeout) {
       <div class="card">
         <h2 style="margin:0 0 14px;font-size:1.1rem">Barcha savollar</h2>
         ${questions.map((q, i) => {
+          const rr = R[q.id] || {};
           const user = answers[i];
-          const correct = q.correct_index;
-          const isOk = user === correct;
+          const correct = rr.correct_index;
+          const isOk = !!rr.is_correct;
           return `
             <div style="border-top:1px solid var(--line);padding:16px 0;${i===0?'border-top:0':''}">
               <div style="font-size:.85rem;color:var(--mute);margin-bottom:4px">${i+1}-savol ${isOk ? '<span style="color:var(--c1)">✓</span>' : '<span style="color:var(--c4)">✗</span>'}</div>
@@ -364,7 +346,7 @@ function renderResult(correct, total, percent, byTimeout) {
                   <div class="opt-text">${escapeHtml(opt)}</div>
                 </div>`;
               }).join("")}
-              ${q.explanation ? `<div class="explain"><b>Izoh:</b> ${escapeHtml(q.explanation)}</div>` : ""}
+              ${rr.explanation ? `<div class="explain"><b>Izoh:</b> ${escapeHtml(rr.explanation)}</div>` : ""}
             </div>
           `;
         }).join("")}
