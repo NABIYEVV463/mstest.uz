@@ -135,43 +135,30 @@ async function loadLeaderboard() {
   const { data: { session } } = await SB.auth.getSession();
   currentUserId = session?.user?.id || null;
 
-  let q = SB.from("results").select("user_id, correct, total, created_at, profiles(full_name, email)");
   const from = getDateFrom(period);
-  if (from) q = q.gte("created_at", from.toISOString());
-
-  const { data, error } = await q;
+  const { data, error } = await SB.rpc("leaderboard_period", { p_from: from ? from.toISOString() : null });
   if (error) {
-    box.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Xato: ${error.message}</div></div>`;
+    box.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Xato: ${escapeHtml(error.message)}</div></div>`;
     return;
   }
 
   if (!data || !data.length) {
     box.innerHTML = `<div class="empty"><div class="empty-icon">🏆</div><div>Hali reyting bo‘sh</div><div style="font-size:.85rem;margin-top:6px">Birinchi bo‘lib test yeching va reytingga chiqing!</div></div>`;
+    $("podium").innerHTML = "";
+    $("myCard").style.display = "none";
     return;
   }
 
-  const map = new Map();
-  data.forEach(r => {
-    const uid = r.user_id;
-    if (!map.has(uid)) {
-      const name = r.profiles?.full_name || r.profiles?.email?.split("@")[0] || "Foydalanuvchi";
-      map.set(uid, { id: uid, name, tests: 0, correct: 0, total: 0 });
-    }
-    const u = map.get(uid);
-    u.tests += 1;
-    u.correct += r.correct || 0;
-    u.total += r.total || 0;
+  const list = data.map(u => {
+    const correct = Number(u.correct) || 0, total = Number(u.total) || 0;
+    return { me: !!u.me, name: u.name || "Foydalanuvchi", tests: Number(u.tests) || 0, correct, total,
+             score: total > 0 ? Math.round((correct / total) * 100) : 0 };
   });
-
-  const list = [...map.values()].map(u => ({
-    ...u,
-    score: u.total > 0 ? Math.round((u.correct / u.total) * 100) : 0
-  }));
 
   list.sort((a, b) => b.score - a.score || b.tests - a.tests);
 
-  const myIndex = list.findIndex(u => u.id === currentUserId);
-  if (myIndex >= 0 && currentUserId) {
+  const myIndex = list.findIndex(u => u.me);
+  if (myIndex >= 0) {
     const me = list[myIndex];
     $("myCard").style.display = "block";
     $("myCard").className = "my-card";
@@ -211,7 +198,7 @@ async function loadLeaderboard() {
 
   const rows = rest.map((u, i) => {
     const rank = i + 4;
-    const isMe = u.id === currentUserId;
+    const isMe = u.me;
     return `
       <div class="row ${isMe ? "me" : ""}">
         <div class="rank">${rank}</div>
