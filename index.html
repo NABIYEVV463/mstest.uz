@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MStest — Milliy sertifikat va SAT testlari</title>
+<meta name="description" content="MStest — O'zbekistonda milliy sertifikat va SAT imtihonlariga onlayn tayyorlanish platformasi.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Sahifaga xos qo'shimcha stillar */
+header.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 21, 48, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s, border-color 0.3s;
+}
+[data-theme="light"] header.site-header { background: rgba(255, 255, 255, 0.75); }
+
+.nav {
+  max-width: 1200px; margin: 0 auto;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 1.25rem; font-weight: 800;
+  color: var(--ink); text-decoration: none;
+  transition: transform 0.3s;
+}
+.logo:hover { transform: scale(1.03); }
+
+.logo-icon {
+  width: 38px; height: 38px;
+  background: var(--accent-grad);
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 19px;
+  box-shadow: 0 4px 12px rgba(45, 95, 255, 0.4);
+}
+
+.nav-links {
+  display: flex; gap: 26px; align-items: center;
+  list-style: none;
+}
+.nav-links a {
+  font-weight: 600; font-size: 0.94rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.25s;
+}
+.nav-links a::after {
+  content: ''; position: absolute; left: 0; bottom: -6px;
+  width: 0; height: 2px;
+  background: var(--accent-grad);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+
+/* HERO */
+.hero {
+  max-width: 1200px; margin: 0 auto;
+  padding: 70px 20px 100px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 16px;
+  background: rgba(45, 95, 255, 0.12);
+  border: 1px solid rgba(45, 95, 255, 0.3);
+  border-radius: 100px;
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--blue-400);
+  margin-bottom: 22px;
+  animation: badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45, 95, 255, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(45, 95, 255, 0); }
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+  color: var(--ink);
+}
+
+.grad-text {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradShift 4s ease infinite;
+}
+@keyframes gradShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero p {
+  font-size: 1.08rem;
+  color: var(--ink-soft);
+  margin-bottom: 30px;
+  max-width: 520px;
+}
+
+.hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
+
+.hero-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 400px;
+  animation: floatCard 6s ease-in-out infinite;
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
+}
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-1deg); }
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  background: var(--accent-grad);
+  z-index: -1;
+  opacity: 0.3;
+  filter: blur(20px);
+}
+
+.hero-card-title { font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 6px; font-weight: 600; }
+.hero-card-subject { font-size: 1.22rem; font-weight: 800; margin-bottom: 18px; }
+
+.progress-bar {
+  height: 10px; background: var(--bg-soft);
+  border-radius: 100px; overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent-grad);
+  border-radius: 100px;
+  animation: progressAnim 2.5s ease-out infinite;
+  background-size: 200% 100%;
+}
+@keyframes progressAnim {
+  0% { width: 0; background-position: 0% 0; }
+  60% { width: 75%; background-position: 100% 0; }
+  100% { width: 75%; background-position: 100% 0; }
+}
+
+.progress-text {
+  font-size: 0.82rem; color: var(--ink-soft);
+  display: flex; justify-content: space-between;
+  font-weight: 600;
+}
+
+.hero-timer {
+  margin-top: 18px; padding-top: 18px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-size: 0.85rem;
+}
+.hero-timer span:last-child { font-weight: 800; color: var(--blue-400); font-variant-numeric: tabular-nums; }
+
+/* STATS */
+.stats-section { padding: 50px 20px; }
+.stats-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 26px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+}
+.stat-box:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+.stat-number {
+  font-size: 2.4rem; font-weight: 800;
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+.stat-label { font-size: 0.88rem; color: var(--ink-soft); font-weight: 600; }
+
+/* SECTION */
+section.main-section { padding: 70px 20px; }
+.section-header { text-align: center; margin-bottom: 50px; }
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.section-subtitle {
+  font-size: 1.02rem; color: var(--ink-soft);
+  max-width: 600px; margin: 0 auto;
+}
+
+/* SUBJECTS */
+.subjects-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.subject-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, border-color 0.3s;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.subject-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-grad);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 0;
+}
+.subject-card > * { position: relative; z-index: 1; }
+.subject-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--blue-400);
+  box-shadow: 0 20px 40px rgba(45, 95, 255, 0.3);
+}
+.subject-card:hover::before { opacity: 0.08; }
+.subject-card:hover .subject-icon { transform: scale(1.15) rotate(-5deg); }
+.subject-icon {
+  font-size: 2.4rem; display: block;
+  margin-bottom: 12px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.subject-name { font-weight: 800; font-size: 1.02rem; margin-bottom: 4px; }
+.subject-desc { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
+
+/* FEATURES */
+.features-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.feature {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 28px 24px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+  box-shadow: var(--shadow-sm);
+}
+.feature:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+.feature-icon {
+  width: 54px; height: 54px;
+  background: linear-gradient(135deg, rgba(45, 95, 255, 0.15), rgba(6, 182, 212, 0.15));
+  border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 18px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.feature:hover .feature-icon { transform: scale(1.1) rotate(-8deg); }
+.feature h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+.feature p { font-size: 0.92rem; color: var(--ink-soft); line-height: 1.6; }
+
+/* CTA */
+.cta-section { padding: 50px 20px; }
+.cta {
+  max-width: 1200px; margin: 0 auto;
+  background: var(--accent-grad);
+  border-radius: 26px;
+  padding: 60px 40px;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -20px rgba(45, 95, 255, 0.6);
+}
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1), transparent 40%);
+  animation: ctaShine 6s ease-in-out infinite;
+}
+@keyframes ctaShine {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.cta > * { position: relative; z-index: 1; }
+.cta h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+.cta p {
+  font-size: 1.02rem; opacity: 0.95;
+  margin-bottom: 28px; max-width: 560px;
+  margin-left: auto; margin-right: auto;
+}
+.cta .btn3d {
+  background: #fff;
+  color: var(--navy-800);
+  box-shadow: 0 6px 0 #c8d4ff, 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.cta .btn3d:hover {
+  background: #f5f8ff;
+  box-shadow: 0 4px 0 #c8d4ff, 0 14px 28px rgba(0, 0, 0, 0.25);
+}
+.cta .btn3d:active { box-shadow: 0 2px 0 #c8d4ff, 0 4px 10px rgba(0, 0, 0, 0.2); }
+
+/* FOOTER */
+footer.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 50px 20px 24px;
+  margin-top: 40px;
+  background: rgba(10, 21, 48, 0.4);
+  backdrop-filter: blur(10px);
+}
+[data-theme="light"] footer.site-footer { background: rgba(255,255,255,0.5); }
+
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 36px;
+  margin-bottom: 36px;
+}
+.footer-brand p {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  margin-top: 12px;
+  max-width: 300px;
+  line-height: 1.6;
+}
+.footer-col h4 { font-size: 0.95rem; font-weight: 800; margin-bottom: 14px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+  display: inline-block;
+}
+.footer-col a:hover { color: var(--blue-400); transform: translateX(4px); }
+
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 40px 18px 60px;
+    text-align: center;
+    gap: 40px;
+  }
+  .hero p { margin-left: auto; margin-right: auto; }
+  .hero-buttons { justify-content: center; }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  .theme-btn { top: 14px; right: 14px; width: 44px; height: 44px; }
+}
+@media (max-width: 500px) {
+  .nav { padding: 12px 14px; }
+  .logo { font-size: 1.1rem; }
+  .logo-icon { width: 34px; height: 34px; font-size: 17px; }
+  .nav-actions .btn3d { padding: 9px 14px; font-size: 0.82rem; }
+  .nav-actions .btn3d:first-child { display: none; }
+  .stat-number { font-size: 1.9rem; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .cta { padding: 40px 22px; }
+  .hero-card { padding: 22px; }
+}
+[hidden] { display: none !important; }
+@media (max-width: 640px) { .theme-btn { top: auto; bottom: 18px; right: 14px; } }
+</style>
+</head>
+<body>
+
+<!-- ORQA FON -->
+<div class="bg-wrap">
+  <div class="bg-gradient"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="particles" id="particles"></div>
+</div>
+
+<!-- TEMA TUGMASI -->
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+
+<!-- HEADER -->
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">📝</div>
+      MStest
+    </a>
+    <ul class="nav-links">
+      <li><a href="testlar.html">Testlar</a></li>
+      <li><a href="reyting.html">Reyting</a></li>
+      <li><a href="#fanlar">Fanlar</a></li>
+      <li><a href="kabinet.html">Kabinet</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="kirish.html" class="btn3d ghost small">Kirish</a>
+      <a href="kirish.html" class="btn3d small">Boshlash</a>
+      <a id="admin-link" href="admin.html" class="btn3d ghost small" hidden>🛠 Admin</a>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="fade-in">
+    <div class="hero-badge">✨ Milliy sertifikat · SAT · DTM</div>
+    <h1>Imtihonga <span class="grad-text">tayyorlanishni</span> bugun boshla</h1>
+    <p>O‘z darajangizdagi testlarni yeching, natijalaringizni kuzatib boring va imtihonga ishonch bilan kiring.</p>
+    <div class="hero-buttons">
+      <a href="testlar.html" class="btn3d large fade-in delay-1">🚀 Testni boshlash</a>
+      <a href="#fanlar" class="btn3d ghost large fade-in delay-2">Fanlarni ko‘rish</a>
+    </div>
+  </div>
+  <div class="hero-visual fade-in delay-2">
+    <div class="hero-card">
+      <div class="hero-card-title">Test ko‘rinishi (namuna)</div>
+      <div class="hero-card-subject">📐 Matematika — O‘rta</div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="progress-text"><span>15 / 20 savol</span><span>75%</span></div>
+      <div class="hero-timer">
+        <span style="color:var(--ink-soft)">⏱️ Qolgan vaqt</span>
+        <span>12:34</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <div class="stat-box fade-in delay-1">
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Foydalanuvchilar</div>
+    </div>
+    <div class="stat-box fade-in delay-2">
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Savollar</div>
+    </div>
+    <div class="stat-box fade-in delay-3">
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Fanlar</div>
+    </div>
+    <div class="stat-box fade-in delay-4">
+      <div class="stat-number" data-count="0">0</div>
+      <div class="stat-label">Yechilgan testlar</div>
+    </div>
+  </div>
+</section>
+
+<!-- FANLAR -->
+<section id="fanlar" class="main-section">
+  <div class="section-header reveal">
+    <h2 class="section-title">Fanlar</h2>
+    <p class="section-subtitle">O‘zingizga kerakli fanni tanlang va test yechishni boshlang</p>
+  </div>
+  <div class="subjects-grid" id="subjectsGrid">
+    <div style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:40px">Yuklanmoqda...</div>
+  </div>
+</section>
+
+<!-- NEGA BIZ -->
+<section class="main-section">
+  <div class="section-header reveal">
+    <h2 class="section-title">Nega MStest?</h2>
+    <p class="section-subtitle">Bizning platforma imtihonga tayyorlanishni oson va samarali qiladi</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature reveal">
+      <div class="feature-icon">🎯</div>
+      <h3>Darajaga mos testlar</h3>
+      <p>Oson, o‘rta va qiyin darajalar. Har kim o‘ziga mos testni topadi.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon">⏱️</div>
+      <h3>Real imtihon sharoiti</h3>
+      <p>Vaqt chegarasi, savol tuzilishi — hammasi haqiqiy imtihondagidek.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon">📊</div>
+      <h3>Batafsil tahlil</h3>
+      <p>Har bir xato tahlil qilinadi va qaysi mavzuni takrorlash kerakligi ko‘rsatiladi.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon">📱</div>
+      <h3>Istalgan qurilmada</h3>
+      <p>Telefon, planshet yoki kompyuterda — qulay interfeys.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon">🆓</div>
+      <h3>Bepul boshlash</h3>
+      <p>Ro‘yxatdan o‘ting va asosiy testlarni mutlaqo bepul yeching.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon">🏆</div>
+      <h3>Reyting va yutuqlar</h3>
+      <p>Natijalaringizni boshqalar bilan solishtiring va yutuq nishonlarini qo‘lga kiriting.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta reveal">
+    <h2>Tayyorlanishingizni bugun boshlang</h2>
+    <p>Ro‘yxatdan o‘ting va birinchi testingizni bugunoq yeching.</p>
+    <a href="kirish.html" class="btn3d large">Bepul ro‘yxatdan o‘tish →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo"><div class="logo-icon">📝</div>MStest</a>
+      <p>O‘zbekistonda milliy sertifikat va SAT imtihonlariga onlayn tayyorlanish platformasi.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platforma</h4>
+      <ul>
+        <li><a href="testlar.html">Testlar</a></li>
+        <li><a href="reyting.html">Reyting</a></li>
+        <li><a href="kabinet.html">Kabinet</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Yordam</h4>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Aloqa</a></li>
+        <li><a href="#">Foydalanish shartlari</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ijtimoiy</h4>
+      <ul>
+        <li><a href="#">Telegram</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">YouTube</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 MStest.uz — Barcha huquqlar himoyalangan.
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+const $ = id => document.getElementById(id);
+
+// ===== ZARRACHALAR =====
+(function createParticles() {
+  const box = $("particles");
+  if (!box) return;
+  const count = 28;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDuration = (10 + Math.random() * 15) + "s";
+    p.style.animationDelay = (Math.random() * 15) + "s";
+    const size = 2 + Math.random() * 3;
+    p.style.width = size + "px";
+    p.style.height = size + "px";
+    box.appendChild(p);
+  }
+})();
+
+// ===== TEMA =====
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  $("theme").textContent = t === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", t); } catch(e) {}
+}
+$("theme").onclick = () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  applyTheme(cur === "dark" ? "light" : "dark");
+};
+(function initTheme() {
+  let t;
+  try { t = localStorage.getItem("theme"); } catch(e) {}
+  if (!t) t = matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light";
+  applyTheme(t);
+})();
+
+// ===== FANLAR =====
+async function loadSubjects() {
+  const grid = $("subjectsGrid");
+  const note = t => `<div style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:40px">${t}</div>`;
+  const { data, error } = await SB.from("subjects").select("*").order("id");
+  if (error) { grid.innerHTML = note("Fanlarni yuklab bo‘lmadi. Keyinroq urinib ko‘ring."); return; }
+  if (!data || !data.length) { grid.innerHTML = note("Hozircha fanlar qo‘shilmagan."); return; }
+  grid.innerHTML = data.map(s => `
+    <a class="subject-card" href="testlar.html">
+      <span class="subject-icon">${escapeHtml(s.icon || "📚")}</span>
+      <div class="subject-name">${escapeHtml(s.name)}</div>
+      <div class="subject-desc">${escapeHtml(s.description || "")}</div>
+    </a>
+  `).join("");
+}
+
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function loadStats() {
+  try {
+    const { data, error } = await SB.rpc("site_stats");
+    if (error || !data) return;
+    const v = [data.users, data.questions, data.subjects, data.tests_taken];
+    document.querySelectorAll(".stat-number").forEach((el, i) => { el.textContent = v[i] ?? 0; });
+  } catch (e) {}
+}
+
+// Scroll bo'yicha paydo bo'lish (reveal)
+(function () {
+  const els = document.querySelectorAll(".reveal");
+  const showAll = () => els.forEach(el => el.classList.add("visible"));
+  if (!("IntersectionObserver" in window)) { showAll(); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); }
+  }), { threshold: 0.1 });
+  els.forEach(el => io.observe(el));
+  setTimeout(showAll, 3000);
+})();
+
+loadSubjects();
+loadStats();
+</script>
+<script>
+(async () => {
+  try {
+    const a = document.getElementById("admin-link");
+    const { data: { session } } = await SB.auth.getSession();
+    if (!a || !session) return;
+    const { data } = await SB.from("profiles").select("role").eq("id", session.user.id).maybeSingle();
+    if (data && data.role === "admin") a.hidden = false;
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
