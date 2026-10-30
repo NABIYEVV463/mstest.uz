@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kirish — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f4f3ff; --ink:#14163a; --mute:#555880;
+  --card:#ffffff; --line:#d6d3f3;
+  --acc:#5a3df0; --accink:#fff;
+  --success:#12a36a; --danger:#e0405c;
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0b0f2e; --ink:#f1efff; --mute:#a9abd8;
+    --card:#151a4a; --line:#2c3270;
+    --acc:#9a86ff; --accink:#120c3a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0b0f2e; --ink:#f1efff; --mute:#a9abd8;
+  --card:#151a4a; --line:#2c3270;
+  --acc:#9a86ff; --accink:#120c3a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh;
+  background: var(--bg); color: var(--ink);
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.wrap {
+  width: 100%; max-width: 440px;
+}
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--mute); text-decoration: none;
+  font-size: 0.9rem; margin-bottom: 16px;
+  transition: color 0.2s;
+}
+.back:hover { color: var(--acc); }
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 10px 40px -10px rgba(90,61,240,0.15);
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 1.4rem;
+  color: var(--acc); margin-bottom: 8px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--acc), #06b6d4);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+h1 {
+  font-size: 1.5rem; font-weight: 800;
+  margin: 0 0 6px;
+}
+.sub {
+  color: var(--mute); font-size: 0.92rem;
+  margin: 0 0 24px;
+}
+.tabs {
+  display: flex; gap: 6px;
+  background: var(--bg);
+  padding: 5px; border-radius: 12px;
+  margin-bottom: 22px;
+}
+.tab {
+  flex: 1; padding: 10px;
+  background: transparent; border: 0;
+  border-radius: 8px; cursor: pointer;
+  font-weight: 600; font-size: 0.92rem;
+  color: var(--mute); transition: all 0.2s;
+  font-family: inherit;
+}
+.tab.on {
+  background: var(--card); color: var(--acc);
+  box-shadow: 0 2px 8px rgba(90,61,240,0.12);
+}
+label {
+  display: block; font-size: 0.88rem;
+  color: var(--mute); margin: 14px 0 6px;
+  font-weight: 500;
+}
+input {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font: inherit; font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none; border-color: var(--acc);
+  box-shadow: 0 0 0 3px rgba(90,61,240,0.12);
+}
+input::placeholder { color: var(--mute); opacity: 0.7; }
+.btn {
+  width: 100%; padding: 13px;
+  background: var(--acc); color: var(--accink);
+  border: 0; border-radius: 10px;
+  font: inherit; font-weight: 700; font-size: 0.98rem;
+  cursor: pointer; margin-top: 22px;
+  transition: all 0.2s;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px rgba(90,61,240,0.5);
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-link {
+  background: none; border: 0;
+  color: var(--acc); cursor: pointer;
+  font: inherit; font-weight: 600;
+  padding: 0; margin-top: 16px;
+  font-size: 0.9rem;
+  display: block; text-align: center;
+  text-decoration: none;
+}
+.btn-link:hover { text-decoration: underline; }
+.msg {
+  margin-top: 14px; padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem; font-weight: 600;
+  display: none;
+}
+.msg.on { display: block; }
+.msg.ok {
+  background: rgba(18,163,106,0.12);
+  color: var(--success);
+  border: 1px solid rgba(18,163,106,0.3);
+}
+.msg.err {
+  background: rgba(224,64,92,0.12);
+  color: var(--danger);
+  border: 1px solid rgba(224,64,92,0.3);
+}
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hidden { display: none !important; }
+.hp { position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; overflow:hidden; opacity:0; }
+.cap { margin-top:16px; min-height:0; display:flex; justify-content:center; }
+.hint { color:var(--mute); font-size:.8rem; margin:6px 0 0; }
+.footer {
+  text-align: center; color: var(--mute);
+  font-size: 0.85rem; margin-top: 20px;
+}
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 22px 0; color: var(--mute);
+  font-size: 0.82rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--line);
+}
+.theme-btn {
+  position: fixed; top: 20px; right: 20px;
+  width: 42px; height: 42px;
+  border-radius: 12px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink);
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+</style>
+<script>window.onTurnstile = function(){ window.TS_READY = true; if (window.ensureCaptcha) window.ensureCaptcha(window.CUR_FORM || "login"); };</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstile" async defer></script>
+</head>
+<body>
+
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+
+<div class="wrap">
+  <a href="index.html" class="back">← Bosh sahifa</a>
+
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">📝</div>
+      MStest
+    </div>
+    <h1 id="title">Xush kelibsiz!</h1>
+    <p class="sub" id="subtitle">Hisobingizga kiring yoki yangi hisob yarating</p>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="login">Kirish</button>
+      <button class="tab" data-tab="register">Ro‘yxatdan o‘tish</button>
+    </div>
+
+    <!-- LOGIN FORMA -->
+    <form id="loginForm">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="siz@example.com" required autocomplete="email">
+
+      <label for="loginPass">Parol</label>
+      <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
+
+      <div class="hp" aria-hidden="true"><input type="text" name="website" id="hpLogin" tabindex="-1" autocomplete="off"></div>
+      <div class="cap" id="cap-login"></div>
+      <button type="submit" class="btn" id="loginBtn">Kirish</button>
+      <button type="button" class="btn-link" id="forgotBtn">Parolni unutdingizmi?</button>
+    </form>
+
+    <!-- REGISTER FORMA -->
+    <form id="registerForm" class="hidden">
+      <label for="regName">Ism familiya</label>
+      <input type="text" id="regName" placeholder="Ali Valiyev" required autocomplete="name">
+
+      <label for="regEmail">Email</label>
+      <input type="email" id="regEmail" placeholder="siz@example.com" required autocomplete="email">
+
+      <label for="regPass">Parol (kamida 8 belgi)</label>
+      <input type="password" id="regPass" placeholder="••••••••" required minlength="8" autocomplete="new-password">
+      <p class="hint">Kamida 8 belgi, harf va raqam bo‘lishi kerak.</p>
+
+      <label for="regPass2">Parolni tasdiqlang</label>
+      <input type="password" id="regPass2" placeholder="••••••••" required minlength="8" autocomplete="new-password">
+
+      <div class="hp" aria-hidden="true"><input type="text" name="website" id="hpReg" tabindex="-1" autocomplete="off"></div>
+      <div class="cap" id="cap-register"></div>
+      <button type="submit" class="btn" id="registerBtn">Ro‘yxatdan o‘tish</button>
+    </form>
+
+    <!-- PAROLNI TIKLASH -->
+    <form id="forgotForm" class="hidden">
+      <label for="forgotEmail">Email manzilingiz</label>
+      <input type="email" id="forgotEmail" placeholder="siz@example.com" required>
+
+      <div class="hp" aria-hidden="true"><input type="text" name="website" id="hpForgot" tabindex="-1" autocomplete="off"></div>
+      <div class="cap" id="cap-forgot"></div>
+      <button type="submit" class="btn" id="forgotSendBtn">Tiklash havolasini yuborish</button>
+      <button type="button" class="btn-link" id="backToLogin">← Kirishga qaytish</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="footer">
+    © 2025 MStest.uz
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+
+// Cloudflare Turnstile "Site key" (ochiq kalit). Boʻsh qolsa captcha koʻrsatilmaydi.
+const TURNSTILE_SITE_KEY = "";
+
+const $ = id => document.getElementById(id);
+const loginForm = $("loginForm"), registerForm = $("registerForm"), forgotForm = $("forgotForm");
+const msgBox = $("msg"), title = $("title"), subtitle = $("subtitle");
+
+// ===== XAVFSIZ YOʻNALTIRISH (faqat shu saytning .html sahifalari) =====
+function safeNext() {
+  const n = new URLSearchParams(location.search).get("next") || "";
+  return /^[a-z0-9_\-]+\.html(\?[a-z0-9_=&\-%.]*)?$/i.test(n) ? n : "kabinet.html";
+}
+
+// ===== XABAR KO'RSATISH =====
+let msgTimer;
+function showMsg(text, type = "ok") {
+  msgBox.textContent = text;
+  msgBox.className = "msg on " + type;
+  clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => { msgBox.className = "msg"; }, 7000);
+}
+
+// ===== TUGMA YUKLANISHI =====
+function setLoading(btn, loading, text = "") {
+  if (loading) {
+    btn.dataset.origText = btn.textContent;
+    btn.innerHTML = '<span class="spinner"></span>' + text;
+    btn.disabled = true;
+  } else {
+    btn.textContent = btn.dataset.origText || btn.textContent;
+    btn.disabled = false;
+  }
+}
+
+// ===== CAPTCHA (Cloudflare Turnstile) =====
+const CAP = { login: { id: null, token: null }, register: { id: null, token: null }, forgot: { id: null, token: null } };
+window.CUR_FORM = "login";
+window.ensureCaptcha = function (kind) {
+  if (!TURNSTILE_SITE_KEY || !window.TS_READY || !window.turnstile) return;
+  const c = CAP[kind];
+  if (c.id !== null) return;
+  c.id = window.turnstile.render("#cap-" + kind, {
+    sitekey: TURNSTILE_SITE_KEY,
+    theme: "auto",
+    callback: t => { c.token = t; },
+    "expired-callback": () => { c.token = null; },
+    "error-callback": () => { c.token = null; }
+  });
+};
+function needCaptcha(kind) {
+  if (!TURNSTILE_SITE_KEY) return null;
+  const t = CAP[kind].token;
+  if (!t) { showMsg("Avval “Men robot emasman” tekshiruvidan oʻting.", "err"); return false; }
+  return t;
+}
+function resetCaptcha(kind) {
+  const c = CAP[kind]; c.token = null;
+  if (c.id !== null && window.turnstile) { try { window.turnstile.reset(c.id); } catch (e) {} }
+}
+
+// ===== PAROL TALABI =====
+function strongPass(p) {
+  return p.length >= 8 && p.length <= 72 && /\p{L}/u.test(p) && /\d/.test(p);
+}
+
+// ===== KIRISHDA URINISHLAR CHEKLOVI (brauzer tomonida, qoʻshimcha himoya) =====
+const LOCK_KEY = "login_fails";
+function lockLeft() {
+  try { const d = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}"); return Math.max(0, (d.until || 0) - Date.now()); } catch (e) { return 0; }
+}
+function addFail() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}");
+    d.n = (d.n || 0) + 1;
+    if (d.n >= 5) d.until = Date.now() + 60000 * Math.min(15, d.n - 4);
+    localStorage.setItem(LOCK_KEY, JSON.stringify(d));
+  } catch (e) {}
+}
+function clearFails() { try { localStorage.removeItem(LOCK_KEY); } catch (e) {} }
+
+// ===== TAB ALMASHTIRISH =====
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
+  loginForm.classList.toggle("hidden", tab !== "login");
+  registerForm.classList.toggle("hidden", tab !== "register");
+  forgotForm.classList.add("hidden");
+  msgBox.className = "msg";
+  window.CUR_FORM = tab;
+
+  if (tab === "login") {
+    title.textContent = "Xush kelibsiz!";
+    subtitle.textContent = "Hisobingizga kiring";
+  } else if (tab === "register") {
+    title.textContent = "Hisob yaratish";
+    subtitle.textContent = "Bir daqiqada ro‘yxatdan o‘ting";
+  }
+  window.ensureCaptcha(tab);
+}
+
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => switchTab(t.dataset.tab);
+});
+
+// ===== LOGIN =====
+loginForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if ($("hpLogin").value) return; // bot
+  const email = $("loginEmail").value.trim().toLowerCase();
+  const pass = $("loginPass").value;
+  const btn = $("loginBtn");
+
+  const left = lockLeft();
+  if (left > 0) return showMsg("Juda koʻp urinish. " + Math.ceil(left / 1000) + " soniyadan keyin qayta urinib koʻring.", "err");
+  const cap = needCaptcha("login");
+  if (cap === false) return;
+
+  setLoading(btn, true, "Kirilmoqda...");
+  const { data, error } = await SB.auth.signInWithPassword({
+    email, password: pass,
+    options: cap ? { captchaToken: cap } : {}
+  });
+  setLoading(btn, false);
+  resetCaptcha("login");
+
+  if (error) {
+    addFail();
+    if (error.message.includes("Email not confirmed")) showMsg("Emailni tasdiqlang (pochtangizni tekshiring).", "err");
+    else if (/captcha/i.test(error.message)) showMsg("Captcha tekshiruvi oʻtmadi. Qayta urinib koʻring.", "err");
+    else showMsg("Email yoki parol xato.", "err");
+    return;
+  }
+
+  clearFails();
+  showMsg("Muvaffaqiyatli kirdingiz! Yo‘naltirilmoqda...", "ok");
+  setTimeout(() => { location.href = safeNext(); }, 800);
+};
+
+// ===== REGISTER =====
+registerForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if ($("hpReg").value) { showMsg("Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.", "ok"); return; } // bot: soxta javob
+  const name = $("regName").value.trim().replace(/\s+/g, " ");
+  const email = $("regEmail").value.trim().toLowerCase();
+  const pass = $("regPass").value;
+  const pass2 = $("regPass2").value;
+  const btn = $("registerBtn");
+
+  if (!/^[\p{L}\p{M}'’ʻʼ‘.\- ]{2,60}$/u.test(name)) return showMsg("Ismni harflar bilan toʻgʻri kiriting (2–60 belgi).", "err");
+  if (pass !== pass2) return showMsg("Parollar mos emas.", "err");
+  if (!strongPass(pass)) return showMsg("Parol kamida 8 belgi boʻlib, harf va raqamdan iborat boʻlishi kerak.", "err");
+  const cap = needCaptcha("register");
+  if (cap === false) return;
+
+  setLoading(btn, true, "Yaratilmoqda...");
+  const { data, error } = await SB.auth.signUp({
+    email,
+    password: pass,
+    options: Object.assign({ data: { full_name: name } }, cap ? { captchaToken: cap } : {})
+  });
+  setLoading(btn, false);
+  resetCaptcha("register");
+
+  if (error) {
+    if (/captcha/i.test(error.message)) showMsg("Captcha tekshiruvi oʻtmadi. Qayta urinib koʻring.", "err");
+    else if (error.message.includes("already registered")) showMsg("Bu email allaqachon ro‘yxatdan o‘tgan. Kirishni urinib ko‘ring.", "err");
+    else if (/password/i.test(error.message)) showMsg("Parol talabga mos emas. Kuchliroq parol tanlang.", "err");
+    else showMsg("Ro‘yxatdan o‘tib bo‘lmadi. Birozdan keyin qayta urinib ko‘ring.", "err");
+    return;
+  }
+
+  // Agar email tasdiqlash yoqilgan bo'lsa
+  if (data.user && !data.session) {
+    showMsg("Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.", "ok");
+    switchTab("login");
+    return;
+  }
+
+  showMsg("Muvaffaqiyatli ro‘yxatdan o‘tdingiz! Yo‘naltirilmoqda...", "ok");
+  setTimeout(() => location.href = "kabinet.html", 800);
+};
+
+// ===== PAROLNI TIKLASH =====
+$("forgotBtn").onclick = () => {
+  loginForm.classList.add("hidden");
+  registerForm.classList.add("hidden");
+  forgotForm.classList.remove("hidden");
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  title.textContent = "Parolni tiklash";
+  subtitle.textContent = "Emailingizga tiklash havolasi yuboriladi";
+  msgBox.className = "msg";
+  window.CUR_FORM = "forgot";
+  window.ensureCaptcha("forgot");
+};
+
+$("backToLogin").onclick = () => {
+  forgotForm.classList.add("hidden");
+  switchTab("login");
+};
+
+let lastReset = 0;
+forgotForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if ($("hpForgot").value) return;
+  const email = $("forgotEmail").value.trim().toLowerCase();
+  const btn = $("forgotSendBtn");
+
+  if (Date.now() - lastReset < 60000) return showMsg("Iltimos, 1 daqiqa kutib, qayta urinib koʻring.", "err");
+  const cap = needCaptcha("forgot");
+  if (cap === false) return;
+
+  setLoading(btn, true, "Yuborilmoqda...");
+  const { error } = await SB.auth.resetPasswordForEmail(email, {
+    redirectTo: location.origin + location.pathname.replace("kirish.html", "yangi-parol.html"),
+    captchaToken: cap || undefined
+  });
+  setLoading(btn, false);
+  resetCaptcha("forgot");
+
+  if (error && /captcha/i.test(error.message)) return showMsg("Captcha tekshiruvi oʻtmadi. Qayta urinib koʻring.", "err");
+  lastReset = Date.now();
+  // Email bor-yoʻqligini oshkor qilmaymiz
+  showMsg("Agar bu email ro‘yxatdan o‘tgan bo‘lsa, tiklash havolasi yuborildi. Pochtangizni tekshiring.", "ok");
+};
+
+// ===== DARK MODE =====
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const isDark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const next = isDark ? "light" : "dark";
+  r.dataset.theme = next;
+  $("theme").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", next); } catch(e) {}
+};
+
+// Mavzuni yuklash
+try {
+  const t = localStorage.getItem("theme");
+  if (t) {
+    document.documentElement.dataset.theme = t;
+    $("theme").textContent = t === "dark" ? "☀️" : "🌙";
+  } else {
+    const isDark = matchMedia("(prefers-color-scheme:dark)").matches;
+    $("theme").textContent = isDark ? "☀️" : "🌙";
+  }
+} catch(e) {}
+
+// ===== AGAR ALLAQACHON KIRGAN BO'LSA — TO'G'RIDAN-TO'G'RI KABINETGA =====
+(async () => {
+  const { data: { session } } = await SB.auth.getSession();
+  if (session) {
+    location.href = safeNext();
+  }
+})();
+
+// Captcha'ni dastlabki formaga ulash
+window.ensureCaptcha("login");
+</script>
+</body>
+</html>
