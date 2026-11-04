@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Testlar — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3ff;--ink:#14163a;--mute:#555880;--card:#fff;--line:#d6d3f3;--acc:#5a3df0;--accink:#fff;--c1:#12a36a;--c2:#1b8fd1;--c3:#c98400;--c4:#e0405c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a}}
+:root[data-theme="dark"]{--bg:#0b0f2e;--ink:#f1efff;--mute:#a9abd8;--card:#151a4a;--line:#2c3270;--acc:#9a86ff;--accink:#120c3a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.5;min-height:100vh}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.3rem;color:var(--acc);text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--acc),#06b6d4);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.hbtn{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.hbtn:hover{border-color:var(--acc);color:var(--acc)}
+.hbtn.primary{background:var(--acc);color:var(--accink);border-color:transparent}
+.hbtn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(90,61,240,.5)}
+h1{font-size:1.7rem;font-weight:800;margin:0 0 8px}
+.subtitle{color:var(--mute);font-size:1rem;margin:0 0 28px}
+.search-box{position:relative;max-width:500px;margin-bottom:24px}
+.search-box input{width:100%;padding:13px 16px 13px 44px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;font:inherit;font-size:.95rem}
+.search-box input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(90,61,240,.12)}
+.search-box::before{content:'🔍';position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.6}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.filter{padding:8px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;font:inherit;font-weight:600;font-size:.86rem;cursor:pointer;transition:all .2s}
+.filter:hover{border-color:var(--acc)}
+.filter.on{background:var(--acc);color:var(--accink);border-color:transparent}
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.subject{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--ink);display:block;position:relative;overflow:hidden}
+.subject:hover{transform:translateY(-4px);border-color:var(--acc);box-shadow:0 15px 35px -12px rgba(90,61,240,.25)}
+.subject-icon{font-size:2rem;display:block;margin-bottom:10px}
+.subject-name{font-weight:700;font-size:1.02rem;margin-bottom:4px}
+.subject-desc{font-size:.82rem;color:var(--mute);line-height:1.4}
+.subject-count{font-size:.78rem;color:var(--acc);font-weight:600;margin-top:8px}
+.tests{display:grid;gap:12px}
+.test{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:all .2s;text-decoration:none;color:var(--ink)}
+.test:hover{border-color:var(--acc);transform:translateX(4px)}
+.test-name{font-weight:700;font-size:1rem;margin-bottom:4px}
+.test-meta{font-size:.84rem;color:var(--mute);display:flex;gap:10px;flex-wrap:wrap}
+.test-meta span{display:inline-flex;align-items:center;gap:4px}
+.test-diff{padding:2px 10px;border-radius:999px;font-size:.75rem;font-weight:600}
+.diff-Oson{background:rgba(18,163,106,.15);color:var(--c1)}
+.diff-Oʻrtacha{background:rgba(27,143,209,.15);color:var(--c2)}
+.diff-Qiyin{background:rgba(224,64,92,.15);color:var(--c4)}
+.test-go{padding:10px 18px;background:var(--acc);color:var(--accink);border-radius:10px;font-weight:600;font-size:.88rem;white-space:nowrap}
+.empty{color:var(--mute);text-align:center;padding:50px 20px;background:var(--card);border:2px dashed var(--line);border-radius:14px}
+.empty-icon{font-size:2.5rem;margin-bottom:8px;opacity:.5}
+.loading{text-align:center;padding:60px;color:var(--mute)}
+.theme-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--mute);text-decoration:none;font-size:.9rem;font-weight:600;margin-bottom:12px;cursor:pointer;background:none;border:0;padding:0;font-family:inherit}
+.back:hover{color:var(--acc)}
+
+[hidden]{display:none!important}
+.ttabs{display:flex;gap:8px;margin:0 0 26px;overflow-x:auto;padding-bottom:2px}
+.ttab{flex:1 0 auto;padding:13px 18px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;white-space:nowrap;transition:all .2s;text-align:center}
+.ttab:hover{border-color:var(--acc)}
+.ttab.on{background:var(--acc);color:var(--accink);border-color:transparent;box-shadow:0 8px 20px -8px rgba(90,61,240,.55)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:.86rem}
+.chip.lock::after{content:"🔒";font-size:.78rem}
+.chip.acc{border-color:var(--acc);color:var(--acc)}
+.panel-note{color:var(--mute);font-size:.9rem;margin:0 0 14px}
+.test-num{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--bg);border:1px solid var(--line);align-items:center;justify-content:center;font-weight:800;font-size:.85rem;margin-right:10px;flex-shrink:0}
+.test-name{display:flex;align-items:center}
+.warn{color:var(--c3)}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <a href="index.html" class="logo"><div class="logo-icon">📝</div>MStest</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a id="admin-link" href="admin.html" class="hbtn" hidden>🛠 Admin</a>
+      <a href="reyting.html" class="hbtn">🏆 Reyting</a>
+      <a href="kabinet.html" class="hbtn">👤 Kabinet</a>
+      <button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+    </div>
+  </header>
+
+  <h1>Testlar</h1>
+  <p class="subtitle">Test turini tanlang: fanlar bo‘yicha, DTM yoki MS (Mock)</p>
+
+  <div class="ttabs" id="ttabs" role="tablist">
+    <button class="ttab on" data-tab="fan" role="tab">📚 Fanlar bo‘yicha</button>
+    <button class="ttab" data-tab="dtm" role="tab">🎓 DTM-testlar</button>
+    <button class="ttab" data-tab="ms" role="tab">📝 MS (Mock)-testlar</button>
+  </div>
+
+  <!-- 1) FANLAR BO'YICHA -->
+  <section id="pane-fan">
+    <div id="view-subjects">
+      <p class="panel-note">Fanni tanlang, keyin darajasini tanlang: Boshlang‘ich, O‘rta yoki Qiyin.</p>
+
+      <div class="search-box">
+        <input type="text" id="searchS" placeholder="Fan qidirish...">
+      </div>
+
+      <div class="subjects" id="subjectsGrid">
+        <div class="loading">Yuklanmoqda...</div>
+      </div>
+    </div>
+
+    <div id="view-tests" style="display:none">
+      <button class="back" id="backBtn">← Fanlarga qaytish</button>
+      <h2 id="subjectTitle" style="margin:0 0 6px;font-size:1.5rem;font-weight:800">Fan</h2>
+      <p class="subtitle" id="subjectDesc"></p>
+
+      <div class="filters" id="levelFilters">
+        <button class="filter on" data-lvl="all">Barchasi</button>
+      </div>
+
+      <div class="tests" id="testsList"></div>
+    </div>
+  </section>
+
+  <!-- 2) DTM-TESTLAR -->
+  <section id="pane-dtm" hidden>
+    <div class="loading">Yuklanmoqda...</div>
+  </section>
+
+  <!-- 3) MS (MOCK)-TESTLAR -->
+  <section id="pane-ms" hidden>
+    <div class="loading">Yuklanmoqda...</div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+
+
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+const $ = id => document.getElementById(id);
+let allSubjects = [];
+let currentLevel = "all";
+let currentSubject = null;
+let currentLevels = [];
+
+// ===== DARAJA NOMLARI =====
+const LEVEL_NAMES = {
+  boshlangich: "Boshlang‘ich",
+  orta: "O‘rta",
+  ms: "MS",
+  sat: "SAT",
+  ielts: "IELTS",
+  toefl: "TOEFL",
+  cefr: "CEFR",
+  torfl: "TORFL",
+  oson: "Oson",
+  qiyin: "Qiyin"
+};
+
+// ===== DARK MODE =====
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const isDark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const next = isDark ? "light" : "dark";
+  r.dataset.theme = next;
+  $("theme").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", next); } catch(e) {}
+};
+try {
+  const t = localStorage.getItem("theme");
+  if (t) { document.documentElement.dataset.theme = t; $("theme").textContent = t === "dark" ? "☀️" : "🌙"; }
+  else if (matchMedia("(prefers-color-scheme:dark)").matches) $("theme").textContent = "☀️";
+} catch(e) {}
+
+// ===== FANLARNI YUKLASH =====
+async function loadSubjects() {
+  const { data, error } = await SB.from("subjects").select("*").order("id");
+  if (error) {
+    $("subjectsGrid").innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Xato: ${error.message}</div></div>`;
+    return;
+  }
+  allSubjects = data || [];
+  console.log("SUBJECTS:", allSubjects);
+  renderSubjects();
+}
+
+// ===== FANLARNI KO'RSATISH =====
+function renderSubjects(filter = "") {
+  const f = filter.toLowerCase().trim();
+  const list = allSubjects.filter(s => 
+    !f || s.name.toLowerCase().includes(f) || (s.description || "").toLowerCase().includes(f)
+  );
+  const grid = $("subjectsGrid");
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div>Fan topilmadi</div></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(s => `
+    <a href="#" class="subject" data-id="${s.id}">
+      <span class="subject-icon">${s.icon || "📚"}</span>
+      <div class="subject-name">${escapeHtml(s.name)}</div>
+      <div class="subject-desc">${escapeHtml(s.description || "")}</div>
+      <div class="subject-count">Testlarni ko‘rish →</div>
+    </a>
+  `).join("");
+
+  grid.querySelectorAll(".subject").forEach(a => {
+    a.onclick = (e) => {
+      e.preventDefault();
+      const id = a.dataset.id;
+      const subj = allSubjects.find(x => String(x.id) === String(id));
+      console.log("CLICKED:", subj);
+      if (subj) openSubject(subj);
+    };
+  });
+}
+
+// ===== FANNI OCHISH =====
+function openSubject(subj) {
+  currentSubject = subj.id;
+  currentLevel = "all";
+  const LV_ORDER = ["boshlangich", "orta", "qiyin", "oson", "ms", "sat", "ielts", "toefl", "cefr", "torfl"];
+  const rank = l => { const i = LV_ORDER.indexOf(l); return i < 0 ? 99 : i; };
+  currentLevels = (Array.isArray(subj.levels) ? [...subj.levels] : []).filter(l => l !== "ms").sort((a, b) => rank(a) - rank(b)); // MS testlari alohida «MS (Mock)» tabida
+  
+  console.log("LEVELS:", currentLevels);
+
+  $("view-subjects").style.display = "none";
+  $("view-tests").style.display = "block";
+  $("subjectTitle").textContent = subj.name;
+  $("subjectDesc").textContent = subj.description || "";
+
+  renderLevelFilters();
+  loadTests();
+}
+
+// ===== DARAJA FILTRLARINI CHIQARISH =====
+function renderLevelFilters() {
+  const box = $("levelFilters");
+  let html = `<button class="filter on" data-lvl="all">Barchasi</button>`;
+  
+  currentLevels.forEach(lvl => {
+    const label = LEVEL_NAMES[lvl] || lvl;
+    html += `<button class="filter" data-lvl="${lvl}">${label}</button>`;
+  });
+  
+  box.innerHTML = html;
+  
+  box.querySelectorAll(".filter").forEach(b => {
+    b.onclick = () => {
+      box.querySelectorAll(".filter").forEach(x => x.classList.toggle("on", x === b));
+      currentLevel = b.dataset.lvl;
+      loadTests();
+    };
+  });
+}
+
+// ===== ORQAGA =====
+$("backBtn").onclick = () => {
+  $("view-tests").style.display = "none";
+  $("view-subjects").style.display = "block";
+  currentSubject = null;
+};
+
+// ===== TESTLARNI YUKLASH =====
+async function loadTests() {
+  if (!currentSubject) return;
+  const box = $("testsList");
+  box.innerHTML = `<div class="loading">Yuklanmoqda...</div>`;
+
+  let query = SB.from("tests").select("*").eq("subject_id", currentSubject).eq("is_active", true).order("id");
+  if (currentLevel !== "all") query = query.eq("level", currentLevel);
+  else query = query.or("level.is.null,level.neq.ms");
+
+  const { data, error } = await query;
+  if (error) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Xato: ${error.message}</div></div>`;
+    return;
+  }
+  if (!data || !data.length) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">📝</div><div>Bu bo‘limda testlar hali qo‘shilmagan</div><div style="font-size:.85rem;margin-top:6px">Tez orada qo‘shiladi</div></div>`;
+    return;
+  }
+  const topicNo = n => { const m = String(n || "").match(/^\s*(\d+)\s*[.)\-:]/); return m ? parseInt(m[1], 10) : Infinity; };
+  data.sort((a, b) => (topicNo(a.name) - topicNo(b.name)) || (a.id - b.id) || 0);
+  box.innerHTML = data.map(t => {
+    const lvlLabel = LEVEL_NAMES[t.level] || t.level || "";
+    return `
+      <a href="test.html?id=${t.id}" class="test">
+        <div>
+          <div class="test-name">${escapeHtml(t.name)}</div>
+          <div class="test-meta">
+            ${lvlLabel ? `<span class="test-diff diff-${({boshlangich:'Oson',orta:'Oʻrtacha',qiyin:'Qiyin'})[t.level]||escapeHtml(t.difficulty||'Oʻrtacha')}">${escapeHtml(lvlLabel)}</span>` : ""}
+            <span>⏱️ ${t.duration} daqiqa</span>
+            <span>📝 ${t.question_count} savol</span>
+          </div>
+        </div>
+        <div class="test-go">Boshlash →</div>
+      </a>
+    `;
+  }).join("");
+}
+
+// ===== QIDIRUV =====
+$("searchS").oninput = (e) => renderSubjects(e.target.value);
+
+// ===== YORDAMCHI =====
+function escapeHtml(s) {
+  return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+
+// ===== TABLAR: Fanlar bo'yicha | DTM | MS (Mock) =====
+const fmtPt = n => String(Math.round(n * 10) / 10).replace(".", ",");
+const loaded = { dtm: false, ms: false };
+
+function showTab(k) {
+  if (!["fan", "dtm", "ms"].includes(k)) k = "fan";
+  document.querySelectorAll(".ttab").forEach(b => b.classList.toggle("on", b.dataset.tab === k));
+  ["fan", "dtm", "ms"].forEach(x => { $("pane-" + x).hidden = x !== k; });
+  if (k === "dtm" && !loaded.dtm) { loaded.dtm = true; loadDtmTab(); }
+  if (k === "ms" && !loaded.ms) { loaded.ms = true; loadMsTab(); }
+  try { history.replaceState(null, "", k === "fan" ? location.pathname + location.search : "#" + k); } catch (e) {}
+}
+$("ttabs").onclick = e => {
+  const b = e.target.closest(".ttab"); if (!b) return;
+  showTab(b.dataset.tab);
+};
+
+// ----- DTM-testlar -----
+async function loadDtmTab() {
+  const box = $("pane-dtm");
+  const { data, error } = await SB.rpc("dtm_config");
+  if (error || !data) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>DTM testlarni yuklab bo‘lmadi${error ? ": " + escapeHtml(error.message) : ""}</div></div>`;
+    return;
+  }
+  const s = data.settings || {}, req = data.required || [], pairs = data.pairs || [];
+  if (!req.length || !pairs.length) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">🎓</div><div>DTM testlar hali sozlanmagan</div><div style="font-size:.85rem;margin-top:6px">Tez orada qo‘shiladi</div></div>`;
+    return;
+  }
+  const total = req.length * s.req_count + 2 * s.elec_count;
+  const maxScore = req.length * s.req_count * s.req_points + s.elec_count * (s.elec1_points + s.elec2_points);
+  const hours = fmtPt(Math.round(s.minutes / 6) / 10);
+  box.innerHTML = `
+    <p class="panel-note">Majburiy fanlar avtomatik qo‘shiladi, siz mutaxassislik fanlari juftligini tanlaysiz.</p>
+    <div class="chips">
+      ${req.map(r => `<span class="chip lock">${escapeHtml((r.icon || "") + " " + r.name)} · ${s.req_count} ta</span>`).join("")}
+    </div>
+    <div class="chips">
+      <span class="chip acc">📝 Jami ${total} ta test</span>
+      <span class="chip acc">⏱️ ${hours} soat (DTM vaqti)</span>
+      <span class="chip acc">🎯 ${fmtPt(maxScore)} ball</span>
+    </div>
+    <div class="tests">
+      ${pairs.map((p, i) => {
+        const low = p.a.pool < s.elec_count || p.b.pool < s.elec_count;
+        return `
+        <a href="dtm.html?pair=${p.id}" class="test">
+          <div>
+            <div class="test-name"><span class="test-num">${i + 1}</span>${escapeHtml((p.a.icon || "") + " " + p.a.name)} + ${escapeHtml((p.b.icon || "") + " " + p.b.name)}</div>
+            <div class="test-meta">
+              <span>1-fan: ${fmtPt(s.elec1_points)} ball</span>
+              <span>2-fan: ${fmtPt(s.elec2_points)} ball</span>
+              ${low ? '<span class="warn">savollar hali to‘liq emas</span>' : ""}
+            </div>
+          </div>
+          <div class="test-go">Boshlash →</div>
+        </a>`;
+      }).join("")}
+    </div>`;
+}
+
+// ----- MS (Mock)-testlar -----
+async function loadMsTab() {
+  const box = $("pane-ms");
+  const { data, error } = await SB.from("tests").select("*, subjects(name,icon)").eq("level", "ms").eq("is_active", true).order("id");
+  if (error) {
+    box.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Xato: ${escapeHtml(error.message)}</div></div>`;
+    return;
+  }
+  const list = (data || []).filter(t => t.kind !== "dtm");
+  const head = `
+    <p class="panel-note">Faqat modul bo‘yicha baholanadi.</p>
+    <div class="chips">
+      <span class="chip acc">📊 Modul bo‘yicha baholash</span>
+      <span class="chip">🛠 Xatolar ustida ishlash (Pro)</span>
+    </div>`;
+  if (!list.length) {
+    box.innerHTML = head + `<div class="empty"><div class="empty-icon">📝</div><div>MS (Mock) testlar hali qo‘shilmagan</div><div style="font-size:.85rem;margin-top:6px">Tez orada qo‘shiladi</div></div>`;
+    return;
+  }
+  box.innerHTML = head + `<div class="tests">` + list.map((t, i) => {
+    const subj = t.subjects || {};
+    return `
+      <a href="test.html?id=${t.id}" class="test">
+        <div>
+          <div class="test-name"><span class="test-num">${i + 1}</span>${escapeHtml(t.name)}</div>
+          <div class="test-meta">
+            ${subj.name ? `<span>${escapeHtml((subj.icon || "") + " " + subj.name)}</span>` : ""}
+            <span>⏱️ ${t.duration} daqiqa</span>
+            <span>📝 ${t.question_count} savol</span>
+          </div>
+        </div>
+        <div class="test-go">Boshlash →</div>
+      </a>`;
+  }).join("") + `</div>`;
+}
+
+// ===== ISHGA TUSHIRISH =====
+(async () => {
+  await loadSubjects();
+  const params = new URLSearchParams(location.search);
+  const fanSlug = params.get("fan");
+  if (fanSlug) {
+    const s = allSubjects.find(x => x.slug === fanSlug);
+    if (s) openSubject(s);
+  }
+  const t = (location.hash || "").replace("#", "") || params.get("tab");
+  if (t === "dtm" || t === "ms") showTab(t);
+})();
+</script>
+<script>
+(async () => {
+  try {
+    const a = document.getElementById("admin-link");
+    const { data: { session } } = await SB.auth.getSession();
+    if (!a || !session) return;
+    const { data } = await SB.from("profiles").select("role").eq("id", session.user.id).maybeSingle();
+    if (data && data.role === "admin") a.hidden = false;
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
