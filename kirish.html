@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kirish — MStest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;800&display=swap" rel="stylesheet">
+<script>
+(function(){try{
+  var rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var seen = sessionStorage.getItem('intro_seen');
+  if (!rm && !seen && innerHeight >= 560 && innerWidth >= 320) document.documentElement.classList.add('intro');
+}catch(e){}})();
+</script>
+<style>
+:root {
+  --bg:#f4f3ff; --ink:#14163a; --mute:#555880;
+  --card:#ffffff; --line:#d6d3f3;
+  --acc:#5a3df0; --accink:#fff;
+  --success:#12a36a; --danger:#e0405c;
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0b0f2e; --ink:#f1efff; --mute:#a9abd8;
+    --card:#151a4a; --line:#2c3270;
+    --acc:#9a86ff; --accink:#120c3a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0b0f2e; --ink:#f1efff; --mute:#a9abd8;
+  --card:#151a4a; --line:#2c3270;
+  --acc:#9a86ff; --accink:#120c3a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh;
+  background: var(--bg); color: var(--ink);
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.wrap {
+  width: 100%; max-width: 440px;
+}
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--mute); text-decoration: none;
+  font-size: 0.9rem; margin-bottom: 16px;
+  transition: color 0.2s;
+}
+.back:hover { color: var(--acc); }
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 10px 40px -10px rgba(90,61,240,0.15);
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 1.4rem;
+  color: var(--acc); margin-bottom: 8px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--acc), #06b6d4);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+h1 {
+  font-size: 1.5rem; font-weight: 800;
+  margin: 0 0 6px;
+}
+.sub {
+  color: var(--mute); font-size: 0.92rem;
+  margin: 0 0 24px;
+}
+.tabs {
+  display: flex; gap: 6px;
+  background: var(--bg);
+  padding: 5px; border-radius: 12px;
+  margin-bottom: 22px;
+}
+.tab {
+  flex: 1; padding: 10px;
+  background: transparent; border: 0;
+  border-radius: 8px; cursor: pointer;
+  font-weight: 600; font-size: 0.92rem;
+  color: var(--mute); transition: all 0.2s;
+  font-family: inherit;
+}
+.tab.on {
+  background: var(--card); color: var(--acc);
+  box-shadow: 0 2px 8px rgba(90,61,240,0.12);
+}
+label {
+  display: block; font-size: 0.88rem;
+  color: var(--mute); margin: 14px 0 6px;
+  font-weight: 500;
+}
+input {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font: inherit; font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none; border-color: var(--acc);
+  box-shadow: 0 0 0 3px rgba(90,61,240,0.12);
+}
+input::placeholder { color: var(--mute); opacity: 0.7; }
+.btn {
+  width: 100%; padding: 13px;
+  background: var(--acc); color: var(--accink);
+  border: 0; border-radius: 10px;
+  font: inherit; font-weight: 700; font-size: 0.98rem;
+  cursor: pointer; margin-top: 22px;
+  transition: all 0.2s;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px rgba(90,61,240,0.5);
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-link {
+  background: none; border: 0;
+  color: var(--acc); cursor: pointer;
+  font: inherit; font-weight: 600;
+  padding: 0; margin-top: 16px;
+  font-size: 0.9rem;
+  display: block; text-align: center;
+  text-decoration: none;
+}
+.btn-link:hover { text-decoration: underline; }
+.msg {
+  margin-top: 14px; padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem; font-weight: 600;
+  display: none;
+}
+.msg.on { display: block; }
+.msg.ok {
+  background: rgba(18,163,106,0.12);
+  color: var(--success);
+  border: 1px solid rgba(18,163,106,0.3);
+}
+.msg.err {
+  background: rgba(224,64,92,0.12);
+  color: var(--danger);
+  border: 1px solid rgba(224,64,92,0.3);
+}
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hidden { display: none !important; }
+.hp { position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; overflow:hidden; opacity:0; }
+.cap { margin-top:16px; min-height:0; display:flex; justify-content:center; }
+.hint { color:var(--mute); font-size:.8rem; margin:6px 0 0; }
+.footer {
+  text-align: center; color: var(--mute);
+  font-size: 0.85rem; margin-top: 20px;
+}
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 22px 0; color: var(--mute);
+  font-size: 0.82rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--line);
+}
+.theme-btn {
+  position: fixed; top: 20px; right: 20px;
+  width: 42px; height: 42px;
+  border-radius: 12px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink);
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ===== KIRISH ANIMATSIYASI: odamcha pardani tortadi ===== */
+.back { margin-bottom: 28px; }
+.stage { position: relative; }
+.clip, .grip, .man { display: none; }
+
+html.intro .stage .card > * { opacity: 0; animation: introFail .01s 10s forwards; }
+@keyframes introFail { to { opacity: 1; } }
+
+html.intro .clip {
+  display: block; position: absolute; inset: 0; z-index: 20;
+  border-radius: 20px; overflow: hidden; cursor: pointer;
+  animation: introHide .01s 10s forwards;
+}
+@keyframes introHide { to { opacity: 0; visibility: hidden; } }
+.sheet {
+  position: absolute; inset: 0;
+  transform: translateY(calc(var(--p, 0) * var(--h, 0px)));
+  background:
+    repeating-linear-gradient(180deg, transparent 0 17px, rgba(255,255,255,.14) 17px 19px),
+    linear-gradient(160deg, var(--acc), #06b6d4);
+  will-change: transform;
+}
+.sheet::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 18px;
+  background: linear-gradient(rgba(255,255,255,.35), rgba(0,0,0,.28));
+  border-bottom: 1px solid rgba(0,0,0,.25);
+}
+.sheet-logo {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  color: #fff; font-weight: 800; font-size: 1.6rem; text-shadow: 0 2px 10px rgba(0,0,0,.25);
+}
+.sheet-logo i { font-style: normal; font-size: 2.4rem; }
+
+html.intro .grip {
+  display: block; position: absolute; left: 50%; top: -16px;
+  width: 56px; height: 20px; margin-left: -28px; z-index: 30;
+  border-radius: 10px 10px 4px 4px;
+  background: linear-gradient(#f2f5ff, #b9c6f5);
+  border: 1px solid rgba(10,21,48,.25);
+  box-shadow: 0 3px 8px rgba(0,0,0,.25);
+  transform: translateY(calc(var(--p, 0) * var(--h, 0px)));
+  cursor: grab; will-change: transform;
+}
+.grip::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 22px; height: 4px; margin: -2px 0 0 -11px;
+  border-radius: 3px; background: rgba(10,21,48,.35);
+}
+.grip:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+.grip.grab { animation: gripGrab .3s ease-out; }
+@keyframes gripGrab { 40% { filter: brightness(1.15); } }
+
+/* odamcha */
+.man {
+  position: fixed; left: 0; top: 0; width: 60px; height: 96px;
+  z-index: 60; pointer-events: none; will-change: transform;
+}
+.man.on { display: block; }
+@media (max-width: 480px) { .man { width: 48px; height: 77px; } }
+.man svg { width: 100%; height: 100%; overflow: visible; }
+.man .lim { transform-box: view-box; transition: transform .22s ease-out; }
+.man .armL { transform-origin: 24px 32px; }
+.man .armR { transform-origin: 36px 32px; }
+.man .legL { transform-origin: 26px 58px; }
+.man .legR { transform-origin: 34px 58px; }
+.man .shirt { fill: var(--acc); }
+.man .sleeve { stroke: var(--acc); }
+.man.walk .armL, .man.walk .legR { animation: swingA .5s ease-in-out infinite alternate; }
+.man.walk .armR, .man.walk .legL { animation: swingB .5s ease-in-out infinite alternate; }
+@keyframes swingA { from { transform: rotate(28deg); }  to { transform: rotate(-28deg); } }
+@keyframes swingB { from { transform: rotate(-28deg); } to { transform: rotate(28deg); } }
+.man.reach .armL, .man.hang .armL { transform: rotate(168deg); }
+.man.reach .armR, .man.hang .armR { transform: rotate(-168deg); }
+.man.hang .legL { animation: hangA .9s ease-in-out infinite alternate; }
+.man.hang .legR { animation: hangA .9s ease-in-out infinite alternate-reverse; }
+@keyframes hangA { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+.man.wave .armR { animation: waveA .45s ease-in-out infinite alternate; }
+@keyframes waveA { from { transform: rotate(-150deg); } to { transform: rotate(-205deg); } }
+
+/* oynalar ochilishi */
+.stage.open .card { animation: cardOpen .7s cubic-bezier(.16,1,.3,1); }
+@keyframes cardOpen {
+  0% { transform: scale(.97); }
+  40% { box-shadow: 0 0 0 8px rgba(90,61,240,.18), 0 10px 40px -10px rgba(90,61,240,.15); }
+  100% { transform: none; }
+}
+.stage.open .card > * { animation: popIn .55s cubic-bezier(.16,1,.3,1) both; }
+.stage.open .card > :nth-child(2) { animation-delay: .06s; }
+.stage.open .card > :nth-child(3) { animation-delay: .12s; }
+.stage.open .card > :nth-child(4) { animation-delay: .18s; }
+.stage.open .card > :nth-child(5) { animation-delay: .26s; }
+.stage.open .card > :nth-child(6) { animation-delay: .32s; }
+.stage.open .card > :nth-child(7) { animation-delay: .38s; }
+@keyframes popIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+</style>
+<script>window.onTurnstile = function(){ window.TS_READY = true; if (window.ensureCaptcha) window.ensureCaptcha(window.CUR_FORM || "login"); };</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstile" async defer></script>
+</head>
+<body>
+
+<button class="theme-btn" id="theme" title="Mavzu">🌙</button>
+
+<div class="wrap">
+  <a href="index.html" class="back">← Bosh sahifa</a>
+
+  <div class="stage" id="stage">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">📝</div>
+      MStest
+    </div>
+    <h1 id="title">Xush kelibsiz!</h1>
+    <p class="sub" id="subtitle">Hisobingizga kiring yoki yangi hisob yarating</p>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="login">Kirish</button>
+      <button class="tab" data-tab="register">Ro‘yxatdan o‘tish</button>
+    </div>
+
+    <!-- LOGIN FORMA -->
+    <form id="loginForm">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="siz@example.com" required autocomplete="email">
+
+      <label for="loginPass">Parol</label>
+      <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
+
+      <div class="hp" aria-hidden="true"><input type="text" name="website" id="hpLogin" tabindex="-1" autocomplete="off"></div>
+      <div class="cap" id="cap-login"></div>
+      <button type="submit" class="btn" id="loginBtn">Kirish</button>
+      <button type="button" class="btn-link" id="forgotBtn">Parolni unutdingizmi?</button>
+    </form>
+
+    <!-- REGISTER FORMA -->
+    <form id="registerForm" class="hidden">
+      <label for="regName">Ism familiya</label>
+      <input type="text" id="regName" placeholder="Ali Valiyev" required autocomplete="name">
+
+      <label for="regEmail">Email</label>
+      <input type="email" id="regEmail" placeholder="siz@example.com" required autocomplete="email">
+
+      <label for="regPass">Parol (kamida 8 belgi)</label>
+      <input type="password" id="regPass" placeholder="••••••••" required minlength="8" autocomplete="new-password">
+      <p class="hint">Kamida 8 belgi, harf va raqam bo‘lishi kerak.</p>
+
+      <label for="regPass2">Parolni tasdiqlang</label>
+      <input type="password" id="regPass2" placeholder="••••••••" required minlength="8" autocomplete="new-password">
+
+      <div class="hp" aria-hidden="true"><input type="text" name="website" id="hpReg" tabindex="-1" autocomplete="off"></div>
+      <div class="cap" id="cap-register"></div>
+      <button type="submit" class="btn" id="registerBtn">Ro‘yxatdan o‘tish</button>
+    </form>
+
+    <!-- PAROLNI TIKLASH -->
+    <form id="forgotForm" class="hidden">
+      <label for="forgotEmail">Email manzilingiz</label>
+      <input type="email" id="forgotEmail" placeholder="siz@example.com" required>
+
+      <div class="hp" aria-hidden="true"><input type="text" name="website" id="hpForgot" tabindex="-1" autocomplete="off"></div>
+      <div class="cap" id="cap-forgot"></div>
+      <button type="submit" class="btn" id="forgotSendBtn">Tiklash havolasini yuborish</button>
+      <button type="button" class="btn-link" id="backToLogin">← Kirishga qaytish</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="clip" id="clip" aria-hidden="true"><div class="sheet"><div class="sheet-logo"><i>📝</i>MStest</div></div></div>
+  <div class="grip" id="grip" role="button" tabindex="0" aria-label="Kirish oynasini ochish"></div>
+  </div>
+
+  <div class="footer">
+    © 2025 MStest.uz
+  </div>
+</div>
+
+<div class="man" id="man" aria-hidden="true">
+  <svg viewBox="0 0 60 96">
+    <g class="lim legL"><line x1="26" y1="58" x2="26" y2="88" stroke="#26336b" stroke-width="8" stroke-linecap="round"/><ellipse cx="29" cy="92" rx="7" ry="3.5" fill="#14163a"/></g>
+    <g class="lim legR"><line x1="34" y1="58" x2="34" y2="88" stroke="#26336b" stroke-width="8" stroke-linecap="round"/><ellipse cx="37" cy="92" rx="7" ry="3.5" fill="#14163a"/></g>
+    <rect class="shirt" x="20" y="26" width="20" height="36" rx="9"/>
+    <g class="lim armL"><line class="sleeve" x1="24" y1="32" x2="24" y2="54" stroke-width="7" stroke-linecap="round"/><circle cx="24" cy="58" r="4.2" fill="#f2c29b"/></g>
+    <g class="lim armR"><line class="sleeve" x1="36" y1="32" x2="36" y2="54" stroke-width="7" stroke-linecap="round"/><circle cx="36" cy="58" r="4.2" fill="#f2c29b"/></g>
+    <circle cx="30" cy="14" r="11" fill="#f2c29b"/>
+    <path d="M19 13 Q19 2 30 2 Q41 2 41 13 Q36 7 30 7 Q24 7 19 13Z" fill="#2a2250"/>
+    <circle cx="26" cy="14" r="1.4" fill="#14163a"/><circle cx="34" cy="14" r="1.4" fill="#14163a"/>
+    <path d="M26 18.5 Q30 22 34 18.5" stroke="#14163a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB = supabase.createClient(
+  "https://mfxsbeajzfmpaswiaqac.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1meHNiZWFqemZtcGFzd2lhcWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTM5MjYsImV4cCI6MjEwNjk4OTkyNn0.iyTTA_Q-jKL0MjnVK4E8As_xGUkYONn_N5QaTWOZYp4"
+);
+
+// Cloudflare Turnstile "Site key" (ochiq kalit). Boʻsh qolsa captcha koʻrsatilmaydi.
+const TURNSTILE_SITE_KEY = "0x4AAAAAAFus6ask86pLiYlc";
+
+const $ = id => document.getElementById(id);
+const loginForm = $("loginForm"), registerForm = $("registerForm"), forgotForm = $("forgotForm");
+const msgBox = $("msg"), title = $("title"), subtitle = $("subtitle");
+
+// ===== XAVFSIZ YOʻNALTIRISH (faqat shu saytning .html sahifalari) =====
+function safeNext() {
+  const n = new URLSearchParams(location.search).get("next") || "";
+  return /^[a-z0-9_\-]+\.html(\?[a-z0-9_=&\-%.]*)?$/i.test(n) ? n : "kabinet.html";
+}
+
+// ===== XABAR KO'RSATISH =====
+let msgTimer;
+function showMsg(text, type = "ok") {
+  msgBox.textContent = text;
+  msgBox.className = "msg on " + type;
+  clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => { msgBox.className = "msg"; }, 7000);
+}
+
+// ===== TUGMA YUKLANISHI =====
+function setLoading(btn, loading, text = "") {
+  if (loading) {
+    btn.dataset.origText = btn.textContent;
+    btn.innerHTML = '<span class="spinner"></span>' + text;
+    btn.disabled = true;
+  } else {
+    btn.textContent = btn.dataset.origText || btn.textContent;
+    btn.disabled = false;
+  }
+}
+
+// ===== CAPTCHA (Cloudflare Turnstile) =====
+const CAP = { login: { id: null, token: null }, register: { id: null, token: null }, forgot: { id: null, token: null } };
+window.CUR_FORM = "login";
+window.ensureCaptcha = function (kind) {
+  if (!TURNSTILE_SITE_KEY || !window.TS_READY || !window.turnstile) return;
+  const c = CAP[kind];
+  if (c.id !== null) return;
+  c.id = window.turnstile.render("#cap-" + kind, {
+    sitekey: TURNSTILE_SITE_KEY,
+    theme: "auto",
+    callback: t => { c.token = t; },
+    "expired-callback": () => { c.token = null; },
+    "error-callback": () => { c.token = null; }
+  });
+};
+function needCaptcha(kind) {
+  if (!TURNSTILE_SITE_KEY) return null;
+  const t = CAP[kind].token;
+  if (!t) { showMsg("Avval “Men robot emasman” tekshiruvidan oʻting.", "err"); return false; }
+  return t;
+}
+function resetCaptcha(kind) {
+  const c = CAP[kind]; c.token = null;
+  if (c.id !== null && window.turnstile) { try { window.turnstile.reset(c.id); } catch (e) {} }
+}
+
+// ===== PAROL TALABI =====
+function strongPass(p) {
+  return p.length >= 8 && p.length <= 72 && /\p{L}/u.test(p) && /\d/.test(p);
+}
+
+// ===== KIRISHDA URINISHLAR CHEKLOVI (brauzer tomonida, qoʻshimcha himoya) =====
+const LOCK_KEY = "login_fails";
+function lockLeft() {
+  try { const d = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}"); return Math.max(0, (d.until || 0) - Date.now()); } catch (e) { return 0; }
+}
+function addFail() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}");
+    d.n = (d.n || 0) + 1;
+    if (d.n >= 5) d.until = Date.now() + 60000 * Math.min(15, d.n - 4);
+    localStorage.setItem(LOCK_KEY, JSON.stringify(d));
+  } catch (e) {}
+}
+function clearFails() { try { localStorage.removeItem(LOCK_KEY); } catch (e) {} }
+
+// ===== TAB ALMASHTIRISH =====
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
+  loginForm.classList.toggle("hidden", tab !== "login");
+  registerForm.classList.toggle("hidden", tab !== "register");
+  forgotForm.classList.add("hidden");
+  msgBox.className = "msg";
+  window.CUR_FORM = tab;
+
+  if (tab === "login") {
+    title.textContent = "Xush kelibsiz!";
+    subtitle.textContent = "Hisobingizga kiring";
+  } else if (tab === "register") {
+    title.textContent = "Hisob yaratish";
+    subtitle.textContent = "Bir daqiqada ro‘yxatdan o‘ting";
+  }
+  window.ensureCaptcha(tab);
+}
+
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => switchTab(t.dataset.tab);
+});
+
+// ===== LOGIN =====
+loginForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if ($("hpLogin").value) return; // bot
+  const email = $("loginEmail").value.trim().toLowerCase();
+  const pass = $("loginPass").value;
+  const btn = $("loginBtn");
+
+  const left = lockLeft();
+  if (left > 0) return showMsg("Juda koʻp urinish. " + Math.ceil(left / 1000) + " soniyadan keyin qayta urinib koʻring.", "err");
+  const cap = needCaptcha("login");
+  if (cap === false) return;
+
+  setLoading(btn, true, "Kirilmoqda...");
+  const { data, error } = await SB.auth.signInWithPassword({
+    email, password: pass,
+    options: cap ? { captchaToken: cap } : {}
+  });
+  setLoading(btn, false);
+  resetCaptcha("login");
+
+  if (error) {
+    addFail();
+    if (error.message.includes("Email not confirmed")) showMsg("Emailni tasdiqlang (pochtangizni tekshiring).", "err");
+    else if (/captcha/i.test(error.message)) showMsg("Captcha tekshiruvi oʻtmadi. Qayta urinib koʻring.", "err");
+    else showMsg("Email yoki parol xato.", "err");
+    return;
+  }
+
+  clearFails();
+  showMsg("Muvaffaqiyatli kirdingiz! Yo‘naltirilmoqda...", "ok");
+  setTimeout(() => { location.href = safeNext(); }, 800);
+};
+
+// ===== REGISTER =====
+registerForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if ($("hpReg").value) { showMsg("Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.", "ok"); return; } // bot: soxta javob
+  const name = $("regName").value.trim().replace(/\s+/g, " ");
+  const email = $("regEmail").value.trim().toLowerCase();
+  const pass = $("regPass").value;
+  const pass2 = $("regPass2").value;
+  const btn = $("registerBtn");
+
+  if (!/^[\p{L}\p{M}'’ʻʼ‘.\- ]{2,60}$/u.test(name)) return showMsg("Ismni harflar bilan toʻgʻri kiriting (2–60 belgi).", "err");
+  if (pass !== pass2) return showMsg("Parollar mos emas.", "err");
+  if (!strongPass(pass)) return showMsg("Parol kamida 8 belgi boʻlib, harf va raqamdan iborat boʻlishi kerak.", "err");
+  const cap = needCaptcha("register");
+  if (cap === false) return;
+
+  setLoading(btn, true, "Yaratilmoqda...");
+  const { data, error } = await SB.auth.signUp({
+    email,
+    password: pass,
+    options: Object.assign({ data: { full_name: name } }, cap ? { captchaToken: cap } : {})
+  });
+  setLoading(btn, false);
+  resetCaptcha("register");
+
+  if (error) {
+    if (/captcha/i.test(error.message)) showMsg("Captcha tekshiruvi oʻtmadi. Qayta urinib koʻring.", "err");
+    else if (error.message.includes("already registered")) showMsg("Bu email allaqachon ro‘yxatdan o‘tgan. Kirishni urinib ko‘ring.", "err");
+    else if (/password/i.test(error.message)) showMsg("Parol talabga mos emas. Kuchliroq parol tanlang.", "err");
+    else showMsg("Ro‘yxatdan o‘tib bo‘lmadi. Birozdan keyin qayta urinib ko‘ring.", "err");
+    return;
+  }
+
+  // Agar email tasdiqlash yoqilgan bo'lsa
+  if (data.user && !data.session) {
+    showMsg("Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.", "ok");
+    switchTab("login");
+    return;
+  }
+
+  showMsg("Muvaffaqiyatli ro‘yxatdan o‘tdingiz! Yo‘naltirilmoqda...", "ok");
+  setTimeout(() => location.href = "kabinet.html", 800);
+};
+
+// ===== PAROLNI TIKLASH =====
+$("forgotBtn").onclick = () => {
+  loginForm.classList.add("hidden");
+  registerForm.classList.add("hidden");
+  forgotForm.classList.remove("hidden");
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  title.textContent = "Parolni tiklash";
+  subtitle.textContent = "Emailingizga tiklash havolasi yuboriladi";
+  msgBox.className = "msg";
+  window.CUR_FORM = "forgot";
+  window.ensureCaptcha("forgot");
+};
+
+$("backToLogin").onclick = () => {
+  forgotForm.classList.add("hidden");
+  switchTab("login");
+};
+
+let lastReset = 0;
+forgotForm.onsubmit = async (e) => {
+  e.preventDefault();
+  if ($("hpForgot").value) return;
+  const email = $("forgotEmail").value.trim().toLowerCase();
+  const btn = $("forgotSendBtn");
+
+  if (Date.now() - lastReset < 60000) return showMsg("Iltimos, 1 daqiqa kutib, qayta urinib koʻring.", "err");
+  const cap = needCaptcha("forgot");
+  if (cap === false) return;
+
+  setLoading(btn, true, "Yuborilmoqda...");
+  const { error } = await SB.auth.resetPasswordForEmail(email, {
+    redirectTo: location.origin + location.pathname.replace("kirish.html", "yangi-parol.html"),
+    captchaToken: cap || undefined
+  });
+  setLoading(btn, false);
+  resetCaptcha("forgot");
+
+  if (error && /captcha/i.test(error.message)) return showMsg("Captcha tekshiruvi oʻtmadi. Qayta urinib koʻring.", "err");
+  lastReset = Date.now();
+  // Email bor-yoʻqligini oshkor qilmaymiz
+  showMsg("Agar bu email ro‘yxatdan o‘tgan bo‘lsa, tiklash havolasi yuborildi. Pochtangizni tekshiring.", "ok");
+};
+
+// ===== DARK MODE =====
+$("theme").onclick = () => {
+  const r = document.documentElement;
+  const isDark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const next = isDark ? "light" : "dark";
+  r.dataset.theme = next;
+  $("theme").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("theme", next); } catch(e) {}
+};
+
+// Mavzuni yuklash
+try {
+  const t = localStorage.getItem("theme");
+  if (t) {
+    document.documentElement.dataset.theme = t;
+    $("theme").textContent = t === "dark" ? "☀️" : "🌙";
+  } else {
+    const isDark = matchMedia("(prefers-color-scheme:dark)").matches;
+    $("theme").textContent = isDark ? "☀️" : "🌙";
+  }
+} catch(e) {}
+
+// ===== AGAR ALLAQACHON KIRGAN BO'LSA — TO'G'RIDAN-TO'G'RI KABINETGA =====
+(async () => {
+  const { data: { session } } = await SB.auth.getSession();
+  if (session) {
+    location.href = safeNext();
+  }
+})();
+
+// Captcha'ni dastlabki formaga ulash
+window.ensureCaptcha("login");
+</script>
+<script>
+/* ===== KIRISH ANIMATSIYASI ===== */
+(function () {
+  var root = document.documentElement;
+  if (!root.classList.contains('intro')) return;
+  var stage = document.getElementById('stage'), man = document.getElementById('man'),
+      grip = document.getElementById('grip'), clip = document.getElementById('clip'),
+      card = stage.querySelector('.card');
+  var done = false, skipped = false, opened = false, curP = 0, H = 0;
+
+  var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var lerp = function (a, b, t) { return a + (b - a) * t; };
+  var easeOut = function (t) { return 1 - Math.pow(1 - t, 3); };
+  var easeIO = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  function tween(ms, fn, ease, force) {
+    return new Promise(function (res) {
+      var t0 = performance.now();
+      (function f(t) {
+        if (done || (skipped && !force)) return res();
+        var k = Math.min(1, (t - t0) / ms);
+        fn((ease || easeOut)(k));
+        k < 1 ? requestAnimationFrame(f) : res();
+      })(t0);
+    });
+  }
+  function setP(p) { curP = p; stage.style.setProperty('--p', p); }
+  function setMan(x, y) { man.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
+
+  function reveal() {            // oynalar ochiladi
+    if (opened) return; opened = true;
+    try { sessionStorage.setItem('intro_seen', '1'); } catch (e) {}
+    root.classList.remove('intro');
+    stage.classList.add('open');
+    card.inert = false;
+    setTimeout(function () { stage.classList.remove('open'); }, 1400);
+  }
+  function finish() {
+    if (done) return; done = true;
+    clearTimeout(fail);
+    man.classList.remove('on');
+    card.inert = false;
+    reveal();
+  }
+  var fail = setTimeout(finish, 9000);   // har qanday holatda forma ochiladi
+
+  function skip() {
+    if (skipped || opened) return; skipped = true;
+    man.classList.remove('on');
+    var p0 = curP;
+    tween(280, function (e) { setP(lerp(p0, 1, e)); }, easeOut, true).then(finish);
+  }
+  clip.addEventListener('click', skip);
+  grip.addEventListener('click', skip);
+  grip.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); skip(); } });
+
+  (async function run() {
+    try {
+      card.inert = true;
+      await Promise.race([document.fonts ? document.fonts.ready : sleep(0), sleep(1200)]);
+      var sr = stage.getBoundingClientRect();
+      H = sr.height;
+      stage.style.setProperty('--h', H + 'px');
+      setP(0);
+
+      var mw = man.offsetWidth || 60, mh = man.offsetHeight || 96, k = mh / 96;
+      var jump = 16 * k, handY = 7 * k;
+      var gripY = sr.top - 6;                         // ushlagich markazi
+      var yStand = gripY - handY + jump;              // oyoqda turganda qo‘li ushlagichdan past
+      var cx = sr.left + sr.width / 2 - mw / 2;
+      var x0 = -mw - 20;
+
+      man.classList.add('on');
+      man.className = 'man on walk';
+      setMan(x0, yStand);
+      await sleep(350); if (skipped || done) return;
+
+      await tween(2200, function (e) { setMan(lerp(x0, cx, e), yStand); }, function (t) { return t; });
+      if (skipped || done) return;
+
+      man.className = 'man on';                       // to‘xtaydi
+      await sleep(350); if (skipped || done) return;
+
+      man.className = 'man on reach';                 // sakrab ushlaydi
+      await tween(380, function (e) { setMan(cx, yStand - jump * e); });
+      if (skipped || done) return;
+      grip.classList.add('grab');
+      await sleep(220); if (skipped || done) return;
+
+      man.className = 'man on hang';                  // tortadi
+      var yHang = yStand - jump;
+      await tween(1900, function (e) { setP(e); setMan(cx, yHang + e * H); }, easeIO);
+      if (skipped || done) return;
+
+      reveal();                                       // pastga tushdi: oynalar ochiladi
+      man.className = 'man on wave';
+      await sleep(900);
+      man.className = 'man on walk';
+      var xEnd = innerWidth + mw + 20, yEnd = yHang + H;
+      await tween(1500, function (e) { setMan(lerp(cx, xEnd, e), yEnd); }, function (t) { return t; });
+      finish();
+    } catch (err) { finish(); }
+  })();
+})();
+</script>
+</body>
+</html>
